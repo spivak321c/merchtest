@@ -3,7 +3,7 @@ package api
     import (
        "api-customer-merchant/internal/api/handlers"
        "api-customer-merchant/internal/db/repositories"
-       "api-customer-merchant/internal/middleware"
+       //"api-customer-merchant/internal/middleware"
         "api-customer-merchant/internal/domain/merchant"
 
         "github.com/gin-gonic/gin"
@@ -58,6 +58,6 @@ func RegisterRoutes(r *gin.Engine) {
     
     
     // Merchant account access (once approved by admin via Express API)
-    mg.GET("/me", middleware.AuthMiddleware("merchant"), h.GetMyMerchant)
+    mg.GET("/me",  h.GetMyMerchant)
     }
     }

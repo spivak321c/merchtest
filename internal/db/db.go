@@ -2,62 +2,96 @@ package db
 
 import (
 	"log"
+	"os"
 	"time"
 
-	"api-customer-merchant/internal/config"
+	//"api-customer-merchant/internal/config"
 	"api-customer-merchant/internal/db/models"
+
 	//"api-customer-merchant/internal/logger"
 
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
-	"gorm.io/gorm/logger"
+	//"gorm.io/gorm/logger"
 )
 
+// Connect initializes GORM DB for dev environment. It will only AutoMigrate if cfg.DevAutoMigrate==true
 var DB *gorm.DB
 
-// Connect initializes GORM DB for dev environment. It will only AutoMigrate if cfg.DevAutoMigrate==true
-func Connect(cfg *config.Config) error {
-	if cfg.DB_DSN == "" {
-		return nil // allow running without DB in small dev scenarios
-	}
-	var gormLogger logger.Interface
-	if cfg.Env == "development" {
-		gormLogger = logger.Default.LogMode(logger.Info)
-	} else {
-		gormLogger = logger.Default.LogMode(logger.Silent)
-	}
+func Connect() {
+    dsn := os.Getenv("DB_DSN")
+    if dsn == "" {
+        log.Fatal("DB_DSN environment variable not set")
+    }
 
-	gormCfg := &gorm.Config{Logger: gormLogger}
-	db, err := gorm.Open(postgres.Open(cfg.DB_DSN), gormCfg)
-	if err != nil {
-		//logger.Default.Error("failed to open db", zapError(err))
-		log.Fatal("failed to open db", zapError(err))
-		return err
-	}
+    var err error
+    DB, err = gorm.Open(postgres.Open(dsn), &gorm.Config{})
+    if err != nil {
+        log.Fatalf("Failed to connect to database: %v", err)
+    }
 
-	sqlDB, err := db.DB()
-	if err != nil {
-		return err
-	}
+    // Configure connection pool
+    sqlDB, err := DB.DB()
+    if err != nil {
+        log.Fatalf("Failed to get SQL DB: %v", err)
+    }
+    sqlDB.SetMaxOpenConns(100)
+    sqlDB.SetMaxIdleConns(10)
+    sqlDB.SetConnMaxLifetime(30 * time.Minute)
 
-	sqlDB.SetMaxOpenConns(20)
-	sqlDB.SetMaxIdleConns(5)
-	sqlDB.SetConnMaxLifetime(30 * time.Minute)
-
-	DB = db
-
-	if cfg.DevAutoMigrate {
-		// Run safe AutoMigrate for dev only. Do not use in prod.
-		// List only a small set of models used during local dev to avoid surprises.
-		// import your models package in this file when enabling.
-		 err = db.AutoMigrate( &models.MerchantApplication{})
-		if err != nil {
-			log.Println("aut migrate skipped or failed:", err)
-		}
-	}
-
-	return nil
+    log.Println("Database connected successfully")
 }
 
-// Helper to wrap errors for zap without importing zap in many files
-func zapError(err error) any { return map[string]any{"error": err.Error()} }
+func AutoMigrate() {
+    // Run AutoMigrate with all models
+	if err := DB.Exec("CREATE EXTENSION IF NOT EXISTS \"uuid-ossp\"").Error; err != nil {
+		log.Fatal("Failed to enable uuid-ossp extension:", err)
+	}
+
+    err := DB.AutoMigrate(
+        //&models.User{},
+        &models.MerchantApplication{},
+        // &models.Product{},
+        // &models.Cart{},
+        // &models.Order{},
+        // &models.OrderItem{},
+        // &models.CartItem{},
+        // &models.Category{},
+        // &models.Inventory{},
+        // &models.Promotion{},
+        // &models.ReturnRequest{},
+        // &models.Payout{},
+    )
+    if err != nil {
+        log.Fatalf("Failed to auto-migrate: %v", err)
+    }
+
+    // Get the underlying SQL database connection
+    sqlDB, err := DB.DB()
+    if err != nil {
+        log.Fatalf("Failed to get SQL DB: %v", err)
+    }
+
+    // Close all connections to clear cached plans
+    if err := sqlDB.Close(); err != nil {
+        log.Printf("Failed to close connections: %v", err)
+    }
+
+    // Reconnect to ensure fresh connections
+    dsn := os.Getenv("DB_DSN")
+    DB, err = gorm.Open(postgres.Open(dsn), &gorm.Config{})
+    if err != nil {
+        log.Fatalf("Failed to reconnect to database: %v", err)
+    }
+
+    // Reconfigure connection pool
+    sqlDB, err = DB.DB()
+    if err != nil {
+        log.Fatalf("Failed to get SQL DB after reconnect: %v", err)
+    }
+    sqlDB.SetMaxOpenConns(100)
+    sqlDB.SetMaxIdleConns(10)
+    sqlDB.SetConnMaxLifetime(30 * time.Minute)
+
+    log.Println("Database migrated and reconnected successfully")
+}

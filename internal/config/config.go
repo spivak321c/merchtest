@@ -1,5 +1,5 @@
 package config
-
+/*
 import (
 	"time"
 
@@ -42,3 +42,4 @@ func Load() (*Config, error) {
 
 	return cfg, nil
 }
+*/
