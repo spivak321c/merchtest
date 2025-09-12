@@ -24,7 +24,7 @@ func (s *ReturnService) CreateReturn(orderItemID uint, reason string, userID uin
     return s.repo.Create(req)
 }
 
-func (s *ReturnService) ApproveReturn(returnID uint, merchantID uint) error {
+func (s *ReturnService) ApproveReturn(returnID uint, merchantID string) error {
     req, err := s.repo.FindByID(returnID)
     if err != nil {
         return err

@@ -47,24 +47,39 @@ func AutoMigrate() {
 	if err := DB.Exec("CREATE EXTENSION IF NOT EXISTS \"uuid-ossp\"").Error; err != nil {
 		log.Fatal("Failed to enable uuid-ossp extension:", err)
 	}
-
+    log.Println("Starting AutoMigrate...")
+    log.Println("Migrating product ecosystem...")
+	if err := DB.AutoMigrate(&models.Product{}, &models.Variant{}, &models.Media{}); err != nil { // Group; GORM handles internal FKs
+		log.Printf("Failed to migrate Product/Variant/Media: %v", err)
+		return
+	}
+    log.Println("Migrating Category...")
+	if err := DB.AutoMigrate(&models.Category{}); err != nil {
+		log.Printf("Failed to migrate Category: %v", err)
+		return
+	}
+ /*
     err := DB.AutoMigrate(
         //&models.User{},
         &models.MerchantApplication{},
-        // &models.Product{},
+         &models.Product{},
+         &models.Variant{},
+         &models.Media{},
         // &models.Cart{},
         // &models.Order{},
         // &models.OrderItem{},
         // &models.CartItem{},
-        // &models.Category{},
+         &models.Category{},
         // &models.Inventory{},
         // &models.Promotion{},
         // &models.ReturnRequest{},
         // &models.Payout{},
     )
+        
     if err != nil {
         log.Fatalf("Failed to auto-migrate: %v", err)
     }
+*/
 
     // Get the underlying SQL database connection
     sqlDB, err := DB.DB()

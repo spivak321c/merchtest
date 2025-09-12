@@ -22,7 +22,7 @@ func (r *ProductRepository) Create(product *models.Product) error {
 }
 
 // FindByID retrieves a product by ID with associated Merchant and Category
-func (r *ProductRepository) FindByID(id uint) (*models.Product, error) {
+func (r *ProductRepository) FindByID(id string) (*models.Product, error) {
     var product models.Product
     err := r.db.Preload("Merchant").Preload("Category").First(&product, id).Error
     if err != nil {
@@ -49,14 +49,14 @@ func (r *ProductRepository) SearchByName(name string) ([]models.Product, error) 
 }
 
 // FindByMerchantID retrieves all products for a merchant
-func (r *ProductRepository) FindByMerchantID(merchantID uint) ([]models.Product, error) {
+func (r *ProductRepository) FindByMerchantID(merchantID string) ([]models.Product, error) {
 	var products []models.Product
 	err := r.db.Preload("Category").Where("merchant_id = ?", merchantID).Find(&products).Error
 	return products, err
 }
 
 // FindByCategoryID retrieves all products in a category
-func (r *ProductRepository) FindByCategoryID(categoryID uint) ([]models.Product, error) {
+func (r *ProductRepository) FindByCategoryID(categoryID string) ([]models.Product, error) {
 	var products []models.Product
 	err := r.db.Preload("Merchant").Where("category_id = ?", categoryID).Find(&products).Error
 	return products, err
@@ -68,11 +68,11 @@ func (r *ProductRepository) Update(product *models.Product) error {
 }
 
 // Delete removes a product by ID
-func (r *ProductRepository) Delete(id uint) error {
+func (r *ProductRepository) Delete(id string) error {
 	return r.db.Delete(&models.Product{}, id).Error
 }
 // In ProductRepository
-func (r *ProductRepository) FindByCategoryWithPagination(categoryID uint, limit, offset int) ([]models.Product, error) {
+func (r *ProductRepository) FindByCategoryWithPagination(categoryID string, limit, offset int) ([]models.Product, error) {
     var products []models.Product
     err := r.db.Preload("Merchant").Preload("Category").Where("category_id = ?", categoryID).Limit(limit).Offset(offset).Find(&products).Error
     return products, err

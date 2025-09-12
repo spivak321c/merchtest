@@ -49,12 +49,12 @@ func AuthMiddleware(entityType string) gin.HandlerFunc {
             return
         }
 
-        id := claims["id"].(float64)
+        id := claims["id"].(string)
         switch entityType {
 case "user":
-            c.Set("userID", uint(id))
+            c.Set("userID", id)
         case "merchant":
-            c.Set("merchantID", uint(id))
+            c.Set("merchantID", id)
         }
         c.Next()
     }

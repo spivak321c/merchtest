@@ -14,7 +14,7 @@ type MerchantHandler struct {
 	service *merchant.MerchantService
 }
 
-func NewMerchantHandler(s *merchant.MerchantService) *MerchantHandler {
+func NewMerchantAuthHandler(s *merchant.MerchantService) *MerchantHandler {
 	return &MerchantHandler{service: s}
 }
 

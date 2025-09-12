@@ -25,13 +25,13 @@ func NewProductService(productRepo *repositories.ProductRepository, inventoryRep
 }
 
 // GetProductByID retrieves a product by its ID
-func (s *ProductService) GetProductByID(id uint) (*models.Product, error) {
-    if id == 0 {
+func (s *ProductService) GetProductByID(id string) (*models.Product, error) {
+    if id == "" {
         return nil, errors.New("invalid product ID")
     }
 
     ctx := context.Background()
-    key := fmt.Sprintf("product:%d", id)
+    key := fmt.Sprintf("product:%s", id)
     data, err := utils.GetOrSetCache(ctx, key, 10*time.Minute, func() (any, error) {
         product, err := s.productRepo.FindByID(id)
         if err != nil {
@@ -68,19 +68,19 @@ func (s *ProductService) SearchProductsByName(name string) ([]models.Product, er
 
 // GetProductsByCategory retrieves products in a category
 // In ProductService
-func (s *ProductService) GetProductsByCategory(categoryID uint, limit, offset int) ([]models.Product, error) {
-    if categoryID == 0 {
+func (s *ProductService) GetProductsByCategory(categoryID string, limit, offset int) ([]models.Product, error) {
+    if categoryID == "" {
         return nil, errors.New("invalid category ID")
     }
     return s.productRepo.FindByCategoryWithPagination(categoryID, limit, offset)
 }
 
 // CreateProduct creates a new product for a merchant
-func (s *ProductService) CreateProduct(product *models.Product, merchantID uint) error {
+func (s *ProductService) CreateProduct(product *models.Product, merchantID string) error {
 	if product == nil {
 		return errors.New("product cannot be nil")
 	}
-	if merchantID == 0 {
+	if merchantID == "" {
 		return errors.New("invalid merchant ID")
 	}
 	if strings.TrimSpace(product.Name) == "" {
@@ -92,7 +92,7 @@ func (s *ProductService) CreateProduct(product *models.Product, merchantID uint)
 	if product.Price <= 0 {
 		return errors.New("price must be positive")
 	}
-	if product.CategoryID == 0 {
+	if product.CategoryID == "" {
 		return errors.New("category ID must be set")
 	}
 
@@ -106,11 +106,11 @@ func (s *ProductService) CreateProduct(product *models.Product, merchantID uint)
 }
 
 // UpdateProduct updates an existing product (merchant only)
-func (s *ProductService) UpdateProduct(product *models.Product, merchantID uint) error {
-	if product == nil || product.ID == 0 {
+func (s *ProductService) UpdateProduct(product *models.Product, merchantID string) error {
+	if product == nil || product.ID == "" {
 		return errors.New("invalid product or product ID")
 	}
-	if merchantID == 0 {
+	if merchantID == "" {
 		return errors.New("invalid merchant ID")
 	}
 	if strings.TrimSpace(product.Name) == "" {
@@ -122,7 +122,7 @@ func (s *ProductService) UpdateProduct(product *models.Product, merchantID uint)
 	if product.Price <= 0 {
 		return errors.New("price must be positive")
 	}
-	if product.CategoryID == 0 {
+	if product.CategoryID == "" {
 		return errors.New("category ID must be set")
 	}
 
@@ -144,11 +144,11 @@ func (s *ProductService) UpdateProduct(product *models.Product, merchantID uint)
 }
 
 // DeleteProduct deletes a product (merchant only)
-func (s *ProductService) DeleteProduct(id uint, merchantID uint) error {
-	if id == 0 {
+func (s *ProductService) DeleteProduct(id string, merchantID string) error {
+	if id == "" {
 		return errors.New("invalid product ID")
 	}
-	if merchantID == 0 {
+	if merchantID == "" {
 		return errors.New("invalid merchant ID")
 	}
 
@@ -164,4 +164,6 @@ func (s *ProductService) DeleteProduct(id uint, merchantID uint) error {
 	return s.productRepo.Delete(id)
 }
 
-
+func (s *ProductService) GetProductsByMerchantID(merchantID string) ([]models.Product, error) {
+	return s.productRepo.FindByMerchantID(merchantID)
+}

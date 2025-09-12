@@ -51,11 +51,11 @@ func (s *CartService) GetActiveCart(userID uint) (*models.Cart, error) {
 }
 
 // AddItemToCart adds a product to the user's active cart
-func (s *CartService) AddItemToCart(userID, productID uint, quantity int) (*models.Cart, error) {
+func (s *CartService) AddItemToCart(userID uint, productID string, quantity int) (*models.Cart, error) {
     if userID == 0 {
         return nil, errors.New("invalid user ID")
     }
-    if productID == 0 {
+    if productID == "" {
         return nil, errors.New("invalid product ID")
     }
     if quantity <= 0 {
@@ -73,7 +73,7 @@ func (s *CartService) AddItemToCart(userID, productID uint, quantity int) (*mode
     if err != nil {
         return nil, errors.New("product not found")
     }
-    if product.MerchantID == 0 {
+    if product.MerchantID == "" {
         return nil, errors.New("invalid merchant for product")
     }
 

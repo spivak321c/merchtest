@@ -35,7 +35,7 @@ func (r *CartItemRepository) FindByCartID(cartID uint) ([]models.CartItem, error
 }
 
 // FindByProductIDAndCartID retrieves a cart item by product ID and cart ID
-func (r *CartItemRepository) FindByProductIDAndCartID(productID, cartID uint) (*models.CartItem, error) {
+func (r *CartItemRepository) FindByProductIDAndCartID(productID string, cartID uint) (*models.CartItem, error) {
 	var cartItem models.CartItem
 	err := r.db.Preload("Product.Merchant").Preload("Merchant").Where("product_id = ? AND cart_id = ?", productID, cartID).First(&cartItem).Error
 	return &cartItem, err

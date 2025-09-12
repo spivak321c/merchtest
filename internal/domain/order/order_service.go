@@ -203,7 +203,7 @@ func (s *OrderService) UpdateOrderStatus(orderID uint, status string) (*models.O
 }
 
 
-func (s *OrderService) UpdateOrderItemStatus(orderItemID uint, status models.FulfillmentStatus, merchantID uint) error {
+func (s *OrderService) UpdateOrderItemStatus(orderItemID uint, status models.FulfillmentStatus, merchantID string) error {
     item, err := s.orderItemRepo.FindByID(orderItemID)
     if err != nil || item.MerchantID != merchantID {
         return errors.New("invalid item or permission")
