@@ -23,18 +23,37 @@ func (s FulfillmentStatus) Valid() error {
 	}
 }
 
+// type OrderItem struct {
+// 	gorm.Model
+// 	OrderID           uint              `gorm:"not null" json:"order_id"`
+// 	ProductID         string              `gorm:"not null" json:"product_id"`
+// 	MerchantID        uint              `gorm:"not null" json:"merchant_id"`
+// 	Quantity          int               `gorm:"not null" json:"quantity"`
+// 	Price             float64           `gorm:"type:decimal(10,2);not null" json:"price"`
+// 	FulfillmentStatus FulfillmentStatus `gorm:"type:varchar(20);not null;default:'New'" json:"fulfillment_status"`
+// 	Order             Order             `gorm:"foreignKey:OrderID"`
+// 	Product           Product           `gorm:"foreignKey:ProductID"`
+// 	Merchant          Merchant          `gorm:"foreignKey:MerchantID"`
+// }
+
+
+
+
 type OrderItem struct {
 	gorm.Model
-	OrderID           uint              `gorm:"not null" json:"order_id"`
-	ProductID         string              `gorm:"not null" json:"product_id"`
-	MerchantID        uint              `gorm:"not null" json:"merchant_id"`
+	OrderID           uint              `gorm:"not null;index" json:"order_id"`
+	ProductID         uint              `gorm:"not null;index" json:"product_id"`
+	MerchantID        string            `gorm:"not null;index" json:"merchant_id"`
 	Quantity          int               `gorm:"not null" json:"quantity"`
 	Price             float64           `gorm:"type:decimal(10,2);not null" json:"price"`
 	FulfillmentStatus FulfillmentStatus `gorm:"type:varchar(20);not null;default:'New'" json:"fulfillment_status"`
 	Order             Order             `gorm:"foreignKey:OrderID"`
-	Product           Product           `gorm:"foreignKey:ProductID"`
+	Product           Product           `gorm:"foreignKey:ProductID;references:ID"`
 	Merchant          Merchant          `gorm:"foreignKey:MerchantID"`
 }
+
+
+
 
 // BeforeCreate validates the FulfillmentStatus field
 func (oi *OrderItem) BeforeCreate(tx *gorm.DB) error {
