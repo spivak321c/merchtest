@@ -23,14 +23,14 @@ func (r *InventoryRepository) Create(inventory *models.Inventory) error {
 }
 
 // FindByProductID retrieves inventory by product ID
-func (r *InventoryRepository) FindByProductID(productID uint) (*models.Inventory, error) {
+func (r *InventoryRepository) FindByProductID(productID string) (*models.Inventory, error) {
 	var inventory models.Inventory
 	err := r.db.Where("product_id = ?", productID).First(&inventory).Error
 	return &inventory, err
 }
 
 // UpdateStock updates the stock quantity for a product
-func (r *InventoryRepository) UpdateStock(productID uint, quantityChange int) error {
+func (r *InventoryRepository) UpdateStock(productID string, quantityChange int) error {
 	return r.db.Model(&models.Inventory{}).Where("product_id = ?", productID).
 		Update("stock_quantity", gorm.Expr("stock_quantity + ?", quantityChange)).Error
 }

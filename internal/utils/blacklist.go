@@ -26,6 +26,7 @@ func IsBlacklisted(token string) bool {
         log.Println("RedisClient is nil, skipping blacklist check")
         return false // Fallback to allow operation if Redis is unavailable
     }
+    if RedisClient == nil { return false }
     _, err := RedisClient.Get(ctx, "blacklist:"+token).Result() // Line 22
     return err == nil // Token exists in Redis if no error
 }

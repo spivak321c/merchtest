@@ -7,7 +7,7 @@ import (
 type CartItem struct {
 	gorm.Model
 	CartID     uint    `gorm:"not null" json:"cart_id"`
-	ProductID  uint    `gorm:"not null" json:"product_id"`
+	ProductID  string    `gorm:"not null" json:"product_id"`
 	Quantity   int     `gorm:"not null" json:"quantity"`
 	MerchantID string    `gorm:"not null" json:"merchant_id"`
 	Cart       Cart    `gorm:"foreignKey:CartID"`

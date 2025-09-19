@@ -52,7 +52,7 @@ func (r *CartItemRepository) FindByCartID(ctx context.Context, cartID uint) ([]m
 	return cartItems, err
 }
 
-func (r *CartItemRepository) FindByProductIDAndCartID(ctx context.Context, productID, cartID uint) (*models.CartItem, error) {
+func (r *CartItemRepository) FindByProductIDAndCartID(ctx context.Context, productID string, cartID uint) (*models.CartItem, error) {
 	var cartItem models.CartItem
 	err := r.db.WithContext(ctx).
 		Preload("Product.Merchant").

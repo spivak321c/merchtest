@@ -1,8 +1,10 @@
 package cart
 
 import (
+	"api-customer-merchant/internal/db"
 	"api-customer-merchant/internal/db/models"
 	"api-customer-merchant/internal/db/repositories"
+	"api-customer-merchant/internal/api/dto" // Assuming dto.BulkUpdateRequest is defined here with ProductID string, Quantity int
 	"context"
 	"errors"
 	"fmt"
@@ -25,8 +27,8 @@ type CartService struct {
 	cartItemRepo  *repositories.CartItemRepository
 	productRepo   *repositories.ProductRepository
 	inventoryRepo *repositories.InventoryRepository
-	logger      *zap.Logger
-	validator   *validator.Validate
+	logger        *zap.Logger
+	validator     *validator.Validate
 }
 
 func NewCartService(cartRepo *repositories.CartRepository, cartItemRepo *repositories.CartItemRepository, productRepo *repositories.ProductRepository, inventoryRepo *repositories.InventoryRepository, logger *zap.Logger) *CartService {
@@ -35,8 +37,8 @@ func NewCartService(cartRepo *repositories.CartRepository, cartItemRepo *reposit
 		cartItemRepo:  cartItemRepo,
 		productRepo:   productRepo,
 		inventoryRepo: inventoryRepo,
-		logger:      logger,
-		validator:   validator.New(),
+		logger:        logger,
+		validator:     validator.New(),
 	}
 }
 
@@ -62,7 +64,6 @@ func (s *CartService) GetActiveCart(ctx context.Context, userID uint) (*models.C
 	return s.cartRepo.FindByID(ctx, cart.ID)
 }
 
-
 func (s *CartService) GetCart(ctx context.Context, userID uint) (*models.Cart, error) {
 	cart, err := s.GetActiveCart(ctx, userID)
 	if err != nil {
@@ -74,14 +75,12 @@ func (s *CartService) GetCart(ctx context.Context, userID uint) (*models.Cart, e
 	return cart, nil
 }
 
-
-
 // AddItemToCart adds a product to the user's active cart
-func (s *CartService) AddItemToCart(ctx context.Context, userID,  quantity uint,productID string) (*models.Cart, error) {
+func (s *CartService) AddItemToCart(ctx context.Context, userID uint, quantity uint, productID string) (*models.Cart, error) {
 	if userID == 0 {
 		return nil, ErrInvalidUserID
 	}
-	if productID == 0 {
+	if productID == "" {
 		return nil, errors.New("invalid product ID")
 	}
 	if quantity == 0 {
@@ -93,46 +92,40 @@ func (s *CartService) AddItemToCart(ctx context.Context, userID,  quantity uint,
 		return nil, err
 	}
 
-	// Fixed: Assume productRepo.FindByID takes (ctx, uint)
-	product, err := s.productRepo.FindByID(productID) // Changed: uint, added ctx
+	product, err := s.productRepo.FindByID(productID)
 	if err != nil {
 		return nil, ErrProductNotFound
 	}
 
-	// Fixed: Assume FindByProductID takes (ctx, uint)
-	inventory, err := s.inventoryRepo.FindByProductID(productID) // Changed: uint, ctx
+	inventory, err := s.inventoryRepo.FindByProductID(productID)
 	if err != nil {
 		return nil, ErrInventoryNotFound
 	}
-	// Fixed: Assume field is Quantity
-	if inventory.Quantity < int(quantity) { // Changed to Quantity
+	if inventory.StockQuantity < int(quantity) {
 		return nil, ErrInsufficientStock
 	}
 
-	// Fixed: Tx returns (*Cart, error)
-	err = s.cartRepo.db.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
+	err = db.DB.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
 		cartItem, err := s.cartItemRepo.FindByProductIDAndCartID(ctx, productID, cart.ID)
 		newQty := quantity
 		if err == nil {
 			newQty += uint(cartItem.Quantity)
-			if inventory.Quantity < int(newQty) {
+			if inventory.StockQuantity < int(newQty) {
 				return ErrInsufficientStock
 			}
-			// Fixed: inventory.ID as uint
 			if err := s.cartItemRepo.UpdateQuantityWithReservation(ctx, cartItem.ID, int(newQty), inventory.ID); err != nil {
 				return err
 			}
 		} else if errors.Is(err, gorm.ErrRecordNotFound) {
 			cartItem = &models.CartItem{
-				CartID:    cart.ID,
-				ProductID: productID,
-				Quantity:  int(quantity),
+				CartID:     cart.ID,
+				ProductID:  productID,
+				Quantity:   int(quantity),
 				MerchantID: product.MerchantID,
 			}
 			if err := s.cartItemRepo.Create(ctx, cartItem); err != nil {
 				return err
 			}
-			// Fixed: Assume method takes (ctx, uint, int)
 			if err := s.inventoryRepo.UpdateInventoryQuantity(ctx, inventory.ID, -int(quantity)); err != nil {
 				return err
 			}
@@ -159,19 +152,17 @@ func (s *CartService) UpdateCartItemQuantity(ctx context.Context, cartItemID uin
 
 	cartItem, err := s.cartItemRepo.FindByID(ctx, cartItemID)
 	if err != nil {
-		return nil, ErrCartItemNotFound
+		return nil, repositories.ErrCartItemNotFound
 	}
 
-	// Fixed: ctx, uint
-	inventory, err := s.inventoryRepo.FindByProductID(ctx, cartItem.ProductID)
+	inventory, err := s.inventoryRepo.FindByProductID(cartItem.ProductID)
 	if err != nil {
 		return nil, ErrInventoryNotFound
 	}
-	if inventory.Quantity < quantity {
+	if inventory.StockQuantity < quantity {
 		return nil, ErrInsufficientStock
 	}
 
-	// Fixed: inventory.ID uint
 	if err := s.cartItemRepo.UpdateQuantityWithReservation(ctx, cartItemID, quantity, inventory.ID); err != nil {
 		return nil, err
 	}
@@ -186,16 +177,14 @@ func (s *CartService) RemoveCartItem(ctx context.Context, cartItemID uint) (*mod
 
 	cartItem, err := s.cartItemRepo.FindByID(ctx, cartItemID)
 	if err != nil {
-		return nil, ErrCartItemNotFound
+		return nil, repositories.ErrCartItemNotFound
 	}
 
-	// Fixed: ctx, uint
-	inventory, err := s.inventoryRepo.FindByProductID(ctx, cartItem.ProductID)
+	inventory, err := s.inventoryRepo.FindByProductID(cartItem.ProductID)
 	if err != nil {
 		return nil, ErrInventoryNotFound
 	}
 
-	// Fixed: inventory.ID uint
 	if err := s.cartItemRepo.DeleteWithUnreserve(ctx, cartItemID, inventory.ID); err != nil {
 		return nil, err
 	}
@@ -203,14 +192,14 @@ func (s *CartService) RemoveCartItem(ctx context.Context, cartItemID uint) (*mod
 	return s.cartRepo.FindByID(ctx, cartItem.CartID)
 }
 
-func (s *CartService) GetCartItemByID(ctx context.Context, cartItemID uint) (*models.CartItem, error) { // Added ctx
+func (s *CartService) GetCartItemByID(ctx context.Context, cartItemID uint) (*models.CartItem, error) {
 	if cartItemID == 0 {
 		return nil, errors.New("invalid cart item ID")
 	}
 	return s.cartItemRepo.FindByID(ctx, cartItemID)
 }
 
-// ClearCart, BulkAddItems ... (add ctx to calls; stub Bulk if not used)
+// ClearCart, BulkAddItems ... (add ctx to all calls; stub Bulk if not used)
 func (s *CartService) ClearCart(ctx context.Context, userID uint) error {
 	cart, err := s.GetActiveCart(ctx, userID)
 	if err != nil {
@@ -228,16 +217,41 @@ func (s *CartService) ClearCart(ctx context.Context, userID uint) error {
 }
 
 // BulkAddItems stub (implement as needed; fixed DTO)
-func (s *CartService) BulkAddItems(ctx context.Context, userID uint, items []dto.BulkUpdateRequest) (*models.Cart, error) { // Fixed DTO name
-	// Validation loop...
-	for _, item := range items {
-		if err := s.validator.Struct(&item); err != nil {
-			return nil, err
-		}
-		// Add each (loop AddItemToCart)
-		_, err := s.AddItemToCart(ctx, userID, item.ProductID, uint(item.Quantity))
-		if err != nil {
-			return nil, err
+// func (s *CartService) BulkAddItems(ctx context.Context, userID uint, items []dto.BulkUpdateRequest) (*models.Cart, error) {
+// 	// Validation loop...
+// 	for _, item := range items {
+// 		if err := s.validator.Struct(&item); err != nil {
+// 			return nil, err
+// 		}
+// 		// Add each (loop AddItemToCart)
+// 		_, err := s.AddItemToCart(ctx, userID, uint(item.Quantity), item.ProductID)
+// 		if err != nil {
+// 			return nil, err
+// 		}
+// 	}
+// 	return s.GetCart(ctx, userID)
+// }
+
+
+
+func (s *CartService) BulkAddItems(ctx context.Context, userID uint, items dto.BulkUpdateRequest) (*models.Cart, error) {
+	if userID == 0 {
+		return nil, ErrInvalidUserID
+	}
+	if err := s.validator.Struct(&items); err != nil {
+		return nil, fmt.Errorf("validation failed: %w", err)
+	}
+
+	// cart, err := s.GetActiveCart(ctx, userID)
+	// if err != nil {
+	// 	return nil, err
+	// }
+
+	for _, item := range items.Items {
+		// Convert uint ProductID to string for consistency
+		productID := fmt.Sprint(item.ProductID)
+		if _, err := s.AddItemToCart(ctx, userID, uint(item.Quantity), productID); err != nil {
+			return nil, fmt.Errorf("failed to add item %s: %w", productID, err)
 		}
 	}
 	return s.GetCart(ctx, userID)

@@ -2,7 +2,7 @@ package dto
 
 import (
 	"api-customer-merchant/internal/db/models" // For enums if needed
-	//"time"
+	"time"
 )
 
 // AddItemRequest: For POST /cart/add (add new item or increment existing)
@@ -29,12 +29,13 @@ type BulkUpdateRequest struct {
 
 // CartResponse: For all responses (shared output DTO)
 type CartResponse struct {
-    ID     string             `json:"id"`
-    UserID uint               `json:"user_id,omitempty"` // Omit for security
-    Status models.CartStatus  `json:"status"`
-    Items  []CartItemResponse `json:"items"`
-    Total  float64            `json:"total,omitempty"` // Computed in service
- 
+	ID        string             `json:"id"`
+	UserID    uint               `json:"user_id,omitempty"`
+	Status    models.CartStatus  `json:"status"`
+	Items     []CartItemResponse `json:"items"`
+	Total     float64            `json:"total,omitempty"`
+	CreatedAt time.Time          `json:"created_at,omitempty"` // Added
+	UpdatedAt time.Time          `json:"updated_at,omitempty"` // Added
 }
 
 type CartItemResponse struct {
