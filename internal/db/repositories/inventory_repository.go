@@ -4,6 +4,8 @@ import (
 	"api-customer-merchant/internal/db"
 	"api-customer-merchant/internal/db/models"
 
+	"context"
+
 	"gorm.io/gorm"
 )
 
@@ -42,3 +44,8 @@ func (r *InventoryRepository) Update(inventory *models.Inventory) error {
 func (r *InventoryRepository) Delete(id uint) error {
 	return r.db.Delete(&models.Inventory{}, id).Error
 }
+
+ func (r *InventoryRepository) UpdateInventoryQuantity(ctx context.Context, inventoryID uint, delta int) error { // Add this method
+ 	return r.db.WithContext(ctx).Model(&models.Inventory{}).Where("id = ?", inventoryID).
+ 		Update("quantity", gorm.Expr("quantity + ?", delta)).Error
+ }

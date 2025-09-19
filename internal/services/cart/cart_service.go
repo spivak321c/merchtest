@@ -1,13 +1,23 @@
 package cart
 
 import (
-	"errors"
 	"api-customer-merchant/internal/db/models"
 	"api-customer-merchant/internal/db/repositories"
+	"context"
+	"errors"
+	"fmt"
 
-	"gorm.io/gorm"
-	"go.uber.org/zap"
 	"github.com/go-playground/validator/v10"
+	"go.uber.org/zap"
+	"gorm.io/gorm"
+)
+
+var (
+	ErrInvalidUserID     = errors.New("invalid user ID")
+	ErrInvalidQuantity   = errors.New("quantity must be positive")
+	ErrProductNotFound   = errors.New("product not found")
+	ErrInventoryNotFound = errors.New("inventory not found")
+	ErrInsufficientStock = errors.New("insufficient stock")
 )
 
 type CartService struct {
@@ -31,91 +41,111 @@ func NewCartService(cartRepo *repositories.CartRepository, cartItemRepo *reposit
 }
 
 // GetActiveCart retrieves or creates an active cart for a user
-func (s *CartService) GetActiveCart(userID uint) (*models.Cart, error) {
+func (s *CartService) GetActiveCart(ctx context.Context, userID uint) (*models.Cart, error) {
 	if userID == 0 {
-		return nil, errors.New("invalid user ID")
+		return nil, ErrInvalidUserID
 	}
-
-	// Try to find an active cart
-	cart, err := s.cartRepo.FindActiveCart(userID)
+	cart, err := s.cartRepo.FindActiveCart(ctx, userID)
 	if err == nil {
 		return cart, nil
 	}
 	if !errors.Is(err, gorm.ErrRecordNotFound) {
-		return nil, err
+		s.logger.Error("Failed to find active cart", zap.Uint("user_id", userID), zap.Error(err))
+		return nil, fmt.Errorf("db error: %w", err)
 	}
 
-	// Create a new active cart if none exists
-	cart = &models.Cart{
-		UserID: userID,
-		Status: models.CartStatusActive,
+	cart = &models.Cart{UserID: userID, Status: models.CartStatusActive}
+	if err := s.cartRepo.Create(ctx, cart); err != nil {
+		s.logger.Error("Failed to create cart", zap.Error(err))
+		return nil, fmt.Errorf("create failed: %w", err)
 	}
-	if err := s.cartRepo.Create(cart); err != nil {
-		return nil, err
-	}
-	return s.cartRepo.FindByID(cart.ID)
+	return s.cartRepo.FindByID(ctx, cart.ID)
 }
 
-// AddItemToCart adds a product to the user's active cart
-func (s *CartService) AddItemToCart(productID string,userID, quantity uint) (*models.Cart, error) {
-	if userID == 0 {
-		return nil, errors.New("invalid user ID")
+
+func (s *CartService) GetCart(ctx context.Context, userID uint) (*models.Cart, error) {
+	cart, err := s.GetActiveCart(ctx, userID)
+	if err != nil {
+		return nil, err
 	}
-	if productID == "" {
+	// Fixed: Use model method
+	cart.ComputeTotals()
+	s.logger.Info("Cart fetched", zap.Uint("user_id", userID), zap.Float64("total", cart.GrandTotal))
+	return cart, nil
+}
+
+
+
+// AddItemToCart adds a product to the user's active cart
+func (s *CartService) AddItemToCart(ctx context.Context, userID, productID, quantity uint) (*models.Cart, error) {
+	if userID == 0 {
+		return nil, ErrInvalidUserID
+	}
+	if productID == 0 {
 		return nil, errors.New("invalid product ID")
 	}
-	if quantity <= 0 {
-		return nil, errors.New("quantity must be positive")
+	if quantity == 0 {
+		return nil, ErrInvalidQuantity
 	}
 
-	// Get active cart
-	cart, err := s.GetActiveCart(userID)
+	cart, err := s.GetActiveCart(ctx, userID)
 	if err != nil {
 		return nil, err
 	}
 
-	// Check if product exists
-	product, err := s.productRepo.FindByID(productID)
+	// Fixed: Assume productRepo.FindByID takes (ctx, uint)
+	product, err := s.productRepo.FindByID(ctx, productID) // Changed: uint, added ctx
 	if err != nil {
-		return nil, errors.New("product not found")
+		return nil, ErrProductNotFound
 	}
 
-	// Check stock availability
-	inventory, err := s.inventoryRepo.FindByProductID(productID)
+	// Fixed: Assume FindByProductID takes (ctx, uint)
+	inventory, err := s.inventoryRepo.FindByProductID(ctx, productID) // Changed: uint, ctx
 	if err != nil {
-		return nil, errors.New("inventory not found")
+		return nil, ErrInventoryNotFound
 	}
-	if inventory.StockQuantity < quantity {
-		return nil, errors.New("insufficient stock")
+	// Fixed: Assume field is Quantity
+	if inventory.Quantity < int(quantity) { // Changed to Quantity
+		return nil, ErrInsufficientStock
 	}
 
-	// Check if product is already in cart
-	cartItem, err := s.cartItemRepo.FindByProductIDAndCartID(productID, cart.ID)
-	if err == nil {
-		// Update quantity if item exists
-		newQuantity := cartItem.Quantity + quantity
-		if inventory.StockQuantity < newQuantity {
-			return nil, errors.New("insufficient stock for updated quantity")
+	// Fixed: Tx returns (*Cart, error)
+	err = s.cartRepo.db.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
+		cartItem, err := s.cartItemRepo.FindByProductIDAndCartID(ctx, productID, cart.ID)
+		newQty := quantity
+		if err == nil {
+			newQty += uint(cartItem.Quantity)
+			if inventory.Quantity < int(newQty) {
+				return ErrInsufficientStock
+			}
+			// Fixed: inventory.ID as uint
+			if err := s.cartItemRepo.UpdateQuantityWithReservation(ctx, cartItem.ID, int(newQty), inventory.ID); err != nil {
+				return err
+			}
+		} else if errors.Is(err, gorm.ErrRecordNotFound) {
+			cartItem = &models.CartItem{
+				CartID:    cart.ID,
+				ProductID: productID,
+				Quantity:  int(quantity),
+				MerchantID: product.MerchantID,
+			}
+			if err := s.cartItemRepo.Create(ctx, cartItem); err != nil {
+				return err
+			}
+			// Fixed: Assume method takes (ctx, uint, int)
+			if err := s.inventoryRepo.UpdateInventoryQuantity(ctx, inventory.ID, -int(quantity)); err != nil {
+				return err
+			}
+		} else {
+			return err
 		}
-		if err := s.cartItemRepo.UpdateQuantity(cartItem.ID, newQuantity); err != nil {
-			return nil, err
-		}
-	} else if errors.Is(err, gorm.ErrRecordNotFound) {
-		// Create new cart item
-		cartItem = &models.CartItem{
-			CartID:     cart.ID,
-			ProductID:  productID,
-			Quantity:   quantity,
-			MerchantID: product.MerchantID,
-		}
-		if err := s.cartItemRepo.Create(cartItem); err != nil {
-			return nil, err
-		}
-	} else {
+		return nil
+	})
+	if err != nil {
 		return nil, err
 	}
-
-	return s.cartRepo.FindByID(cart.ID)
+	// Reload
+	return s.cartRepo.FindByID(ctx, cart.ID)
 }
 
 // UpdateCartItemQuantity updates the quantity of a cart item

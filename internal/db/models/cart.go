@@ -53,11 +53,11 @@ func (c *Cart) BeforeUpdate(tx *gorm.DB) error {
 }
 
 func (c *Cart) AfterFind(tx *gorm.DB) error {
-    c.computeTotals()
+    c.ComputeTotals()
     return nil
 }
 
-func (c *Cart) computeTotals() {
+func (c *Cart) ComputeTotals() {
     c.SubTotal = 0
     for _, item := range c.CartItems {
         c.SubTotal += float64(item.Quantity) * (item.Product.BasePrice).InexactFloat64() // Assume BasePrice in Product

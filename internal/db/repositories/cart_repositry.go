@@ -73,9 +73,9 @@ func (r *CartRepository) FindByUserIDAndStatus(ctx context.Context , userID uint
 }
 
 // FindByUserID retrieves all carts for a user
-func (r *CartRepository) FindByUserID(userID uint) ([]models.Cart, error) {
+func (r *CartRepository) FindByUserID(ctx context.Context, userID uint) ([]models.Cart, error) {
 	var carts []models.Cart
-	err := r.db.Preload("CartItems.Product.Merchant").Where("user_id = ?", userID).Find(&carts).Error
+	err := r.db.WithContext(ctx).Preload("CartItems.Product.Merchant").Where("user_id = ?", userID).Find(&carts).Error
 	return carts, err
 }
 
