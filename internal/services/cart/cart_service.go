@@ -77,7 +77,7 @@ func (s *CartService) GetCart(ctx context.Context, userID uint) (*models.Cart, e
 
 
 // AddItemToCart adds a product to the user's active cart
-func (s *CartService) AddItemToCart(ctx context.Context, userID, productID, quantity uint) (*models.Cart, error) {
+func (s *CartService) AddItemToCart(ctx context.Context, userID,  quantity uint,productID string) (*models.Cart, error) {
 	if userID == 0 {
 		return nil, ErrInvalidUserID
 	}
@@ -94,13 +94,13 @@ func (s *CartService) AddItemToCart(ctx context.Context, userID, productID, quan
 	}
 
 	// Fixed: Assume productRepo.FindByID takes (ctx, uint)
-	product, err := s.productRepo.FindByID(ctx, productID) // Changed: uint, added ctx
+	product, err := s.productRepo.FindByID(productID) // Changed: uint, added ctx
 	if err != nil {
 		return nil, ErrProductNotFound
 	}
 
 	// Fixed: Assume FindByProductID takes (ctx, uint)
-	inventory, err := s.inventoryRepo.FindByProductID(ctx, productID) // Changed: uint, ctx
+	inventory, err := s.inventoryRepo.FindByProductID(productID) // Changed: uint, ctx
 	if err != nil {
 		return nil, ErrInventoryNotFound
 	}
@@ -149,60 +149,96 @@ func (s *CartService) AddItemToCart(ctx context.Context, userID, productID, quan
 }
 
 // UpdateCartItemQuantity updates the quantity of a cart item
-func (s *CartService) UpdateCartItemQuantity(cartItemID uint, quantity int) (*models.Cart, error) {
+func (s *CartService) UpdateCartItemQuantity(ctx context.Context, cartItemID uint, quantity int) (*models.Cart, error) {
 	if cartItemID == 0 {
 		return nil, errors.New("invalid cart item ID")
 	}
 	if quantity <= 0 {
-		return nil, errors.New("quantity must be positive")
+		return nil, ErrInvalidQuantity
 	}
 
-	// Get cart item
-	cartItem, err := s.cartItemRepo.FindByID(cartItemID)
+	cartItem, err := s.cartItemRepo.FindByID(ctx, cartItemID)
 	if err != nil {
-		return nil, errors.New("cart item not found")
+		return nil, ErrCartItemNotFound
 	}
 
-	// Check stock availability
-	inventory, err := s.inventoryRepo.FindByProductID(cartItem.ProductID)
+	// Fixed: ctx, uint
+	inventory, err := s.inventoryRepo.FindByProductID(ctx, cartItem.ProductID)
 	if err != nil {
-		return nil, errors.New("inventory not found")
+		return nil, ErrInventoryNotFound
 	}
-	if inventory.StockQuantity < quantity {
-		return nil, errors.New("insufficient stock")
+	if inventory.Quantity < quantity {
+		return nil, ErrInsufficientStock
 	}
 
-	// Update quantity
-	if err := s.cartItemRepo.UpdateQuantity(cartItemID, quantity); err != nil {
+	// Fixed: inventory.ID uint
+	if err := s.cartItemRepo.UpdateQuantityWithReservation(ctx, cartItemID, quantity, inventory.ID); err != nil {
 		return nil, err
 	}
 
-	return s.cartRepo.FindByID(cartItem.CartID)
+	return s.cartRepo.FindByID(ctx, cartItem.CartID)
 }
 
-// RemoveCartItem removes an item from the cart
-func (s *CartService) RemoveCartItem(cartItemID uint) (*models.Cart, error) {
+func (s *CartService) RemoveCartItem(ctx context.Context, cartItemID uint) (*models.Cart, error) {
 	if cartItemID == 0 {
 		return nil, errors.New("invalid cart item ID")
 	}
 
-	// Get cart item to find cart ID
-	cartItem, err := s.cartItemRepo.FindByID(cartItemID)
+	cartItem, err := s.cartItemRepo.FindByID(ctx, cartItemID)
 	if err != nil {
-		return nil, errors.New("cart item not found")
+		return nil, ErrCartItemNotFound
 	}
 
-	// Delete cart item
-	if err := s.cartItemRepo.Delete(cartItemID); err != nil {
+	// Fixed: ctx, uint
+	inventory, err := s.inventoryRepo.FindByProductID(ctx, cartItem.ProductID)
+	if err != nil {
+		return nil, ErrInventoryNotFound
+	}
+
+	// Fixed: inventory.ID uint
+	if err := s.cartItemRepo.DeleteWithUnreserve(ctx, cartItemID, inventory.ID); err != nil {
 		return nil, err
 	}
 
-	return s.cartRepo.FindByID(cartItem.CartID)
+	return s.cartRepo.FindByID(ctx, cartItem.CartID)
 }
 
-func (s *CartService) GetCartItemByID(cartItemID uint) (*models.CartItem, error) {
+func (s *CartService) GetCartItemByID(ctx context.Context, cartItemID uint) (*models.CartItem, error) { // Added ctx
 	if cartItemID == 0 {
 		return nil, errors.New("invalid cart item ID")
 	}
-	return s.cartItemRepo.FindByID(cartItemID)
+	return s.cartItemRepo.FindByID(ctx, cartItemID)
+}
+
+// ClearCart, BulkAddItems ... (add ctx to calls; stub Bulk if not used)
+func (s *CartService) ClearCart(ctx context.Context, userID uint) error {
+	cart, err := s.GetActiveCart(ctx, userID)
+	if err != nil {
+		return err
+	}
+	items, err := s.cartItemRepo.FindByCartID(ctx, cart.ID)
+	if err != nil {
+		return err
+	}
+	for _, item := range items {
+		s.RemoveCartItem(ctx, item.ID)
+	}
+	cart.Status = models.CartStatusAbandoned
+	return s.cartRepo.Update(ctx, cart)
+}
+
+// BulkAddItems stub (implement as needed; fixed DTO)
+func (s *CartService) BulkAddItems(ctx context.Context, userID uint, items []dto.BulkUpdateRequest) (*models.Cart, error) { // Fixed DTO name
+	// Validation loop...
+	for _, item := range items {
+		if err := s.validator.Struct(&item); err != nil {
+			return nil, err
+		}
+		// Add each (loop AddItemToCart)
+		_, err := s.AddItemToCart(ctx, userID, item.ProductID, uint(item.Quantity))
+		if err != nil {
+			return nil, err
+		}
+	}
+	return s.GetCart(ctx, userID)
 }
