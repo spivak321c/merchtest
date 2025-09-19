@@ -1,9 +1,10 @@
 package payment
 
 import (
-	"errors"
 	"api-customer-merchant/internal/db/models"
 	"api-customer-merchant/internal/db/repositories"
+	"context"
+	"errors"
 )
 
 type PaymentService struct {
@@ -19,7 +20,7 @@ func NewPaymentService(paymentRepo *repositories.PaymentRepository, orderRepo *r
 }
 
 // ProcessPayment creates a payment for an order (placeholder for Stripe)
-func (s *PaymentService) ProcessPayment(orderID uint, amount float64) (*models.Payment, error) {
+func (s *PaymentService) ProcessPayment(ctx context.Context, orderID uint, amount float64) (*models.Payment, error) {
 	if orderID == 0 {
 		return nil, errors.New("invalid order ID")
 	}
@@ -28,7 +29,7 @@ func (s *PaymentService) ProcessPayment(orderID uint, amount float64) (*models.P
 	}
 
 	// Verify order exists
-	order, err := s.orderRepo.FindByID(orderID)
+	order, err := s.orderRepo.FindByID(ctx,orderID)
 	if err != nil {
 		return nil, errors.New("order not found")
 	}

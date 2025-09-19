@@ -251,7 +251,7 @@ func (s *OrderService) CreateOrder(ctx context.Context, userID uint) (*dto.Order
 					"quantity":          gorm.Expr("quantity - ?", item.Quantity),
 					"reserved_quantity": gorm.Expr("reserved_quantity - ?", item.Quantity),
 				}).Error; err != nil {
-				return fmt.Errorf("failed to commit stock for product %d: %w", item.ProductID, err)
+				return fmt.Errorf("failed to commit stock for product %s: %w", item.ProductID, err)
 			}
 		}
 
@@ -320,5 +320,5 @@ func (s *OrderService) GetOrder(ctx context.Context, id uint) (*models.Order, er
 	}
 	// The repository already preloads necessary associations.
 	return s.orderRepo.FindByID(ctx, id)
-	return s.orderRepo.FindByID(id)
+	//return s.orderRepo.FindByID(id)
 }
