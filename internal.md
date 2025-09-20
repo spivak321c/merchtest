@@ -1,5 +1,5 @@
 # Codebase Analysis: internal
-Generated: 2025-09-19 21:46:05
+Generated: 2025-09-19 22:01:26
 ---
 
 ## 📂 Project Structure
@@ -94,7 +94,7 @@ Generated: 2025-09-19 21:46:05
 - Lines: 47
 - Last Modified: 2025-09-19 21:21:08
 
-<xaiArtifact artifact_id="78beb158-2bf0-4f3c-905c-140d2b593670" artifact_version_id="deb6692f-b870-4ad8-a5c6-9db2aefa2302" title="api/dto/cart.go" contentType="text/go">
+<xaiArtifact artifact_id="070984c3-63cc-4d18-b894-dd310296bd6a" artifact_version_id="ba518519-62cc-46db-975c-559c8fd511f3" title="api/dto/cart.go" contentType="text/go">
 ```go
 package dto
 
@@ -152,7 +152,7 @@ type CartItemResponse struct {
 - Lines: 25
 - Last Modified: 2025-09-19 21:21:08
 
-<xaiArtifact artifact_id="088fb4d0-96e3-4b18-8894-658eb31b2d08" artifact_version_id="89d8afb4-8301-42c9-b611-f03142d8d9e5" title="api/dto/order.go" contentType="text/go">
+<xaiArtifact artifact_id="5cf210fd-971b-44dc-a50d-a096c7a055ea" artifact_version_id="08ddfee9-b9f1-418c-9536-96da7cc217e8" title="api/dto/order.go" contentType="text/go">
 ```go
 package dto
 
@@ -189,7 +189,7 @@ type OrderItemResponse struct {
 - Lines: 78
 - Last Modified: 2025-09-19 21:21:08
 
-<xaiArtifact artifact_id="1bd1e4f4-fa11-48da-ab13-2ba81a9816ce" artifact_version_id="69b74c7c-1d1f-4986-8443-fc831c272953" title="api/dto/product.go" contentType="text/go">
+<xaiArtifact artifact_id="17146f70-e913-400e-99c6-77256eed4894" artifact_version_id="cc587f7b-68ff-4428-8904-0f52fb7cd395" title="api/dto/product.go" contentType="text/go">
 ```go
 package dto
 
@@ -278,7 +278,7 @@ type InventoryResponse struct {
 - Lines: 231
 - Last Modified: 2025-09-19 21:21:08
 
-<xaiArtifact artifact_id="203fa5c3-99ea-4efa-acd6-fd8bda7a06bf" artifact_version_id="291ef3d1-3e7c-4dcf-9b0d-3c2200d161cd" title="api/handlers/cart_handler.go" contentType="text/go">
+<xaiArtifact artifact_id="1d5b9ba3-085d-40e0-8e57-a0778f903494" artifact_version_id="784d282c-a909-4bd8-b1be-909aef503469" title="api/handlers/cart_handler.go" contentType="text/go">
 ```go
 //package handlers
 /*
@@ -520,7 +520,7 @@ func (h *CartHandler) RemoveCartItem(c *gin.Context) {
 - Lines: 198
 - Last Modified: 2025-09-19 21:21:08
 
-<xaiArtifact artifact_id="1426a3c1-8300-4743-9138-0b109dd6872c" artifact_version_id="dabdc5f9-2401-4d4b-817e-576a7f822929" title="api/handlers/customer_auth_handler.go" contentType="text/go">
+<xaiArtifact artifact_id="012a26fb-02a9-4fdd-a31d-61e16e3c9c9d" artifact_version_id="f3bac88f-e6ab-4eac-8295-8cc63bf0dbea" title="api/handlers/customer_auth_handler.go" contentType="text/go">
 ```go
 package handlers
 
@@ -729,7 +729,7 @@ func (h *AuthHandler) UpdateProfile(c *gin.Context) {
 - Lines: 336
 - Last Modified: 2025-09-19 21:21:08
 
-<xaiArtifact artifact_id="e9560499-cc80-4926-bf1b-32f366b6fece" artifact_version_id="840c26ec-88ca-4847-b9d3-1ded2c5bc5b7" title="api/handlers/customer_handlers.go" contentType="text/go">
+<xaiArtifact artifact_id="0c814b6f-2690-44cb-b7e1-695e3c9a77dd" artifact_version_id="11cbcdb2-cbb2-46ba-b366-e09821c3ebf5" title="api/handlers/customer_handlers.go" contentType="text/go">
 ```go
 package handlers
 /*
@@ -1076,7 +1076,7 @@ func (h *CustomerHandlers) GetProductsByCategory(c *gin.Context) {
 - Lines: 247
 - Last Modified: 2025-09-19 21:21:08
 
-<xaiArtifact artifact_id="b3ad8552-d233-4c79-a7ad-7675760b4f65" artifact_version_id="c5144e9a-1ed9-4d30-b84e-9341e4c29c4a" title="api/handlers/merchant_auth_handler.go" contentType="text/go">
+<xaiArtifact artifact_id="babee554-dcf4-480b-9348-53c4a2dff365" artifact_version_id="6e085399-21fe-4bc7-ae9f-5c8c93fba44d" title="api/handlers/merchant_auth_handler.go" contentType="text/go">
 ```go
 package handlers
 
@@ -1334,7 +1334,7 @@ func (h *MerchantHandler) GetMyMerchant(c *gin.Context) {
 - Lines: 519
 - Last Modified: 2025-09-19 21:21:08
 
-<xaiArtifact artifact_id="97d43e28-92f5-44b9-88af-3bbc6cf88c84" artifact_version_id="8db4e114-36fb-4f22-82fd-039c73612fdf" title="api/handlers/merchant_handlers.go" contentType="text/go">
+<xaiArtifact artifact_id="f32d3d28-c3aa-44b5-9a08-5d5b818ed69b" artifact_version_id="dd1164df-2dd3-49f6-8c7e-307a0b01e23e" title="api/handlers/merchant_handlers.go" contentType="text/go">
 ```go
 package handlers
 
@@ -1864,7 +1864,7 @@ func (h *MerchantHandler) BulkUploadProducts(c *gin.Context) {
 - Lines: 55
 - Last Modified: 2025-09-19 21:21:08
 
-<xaiArtifact artifact_id="bd5e0e17-f52a-4f06-815c-c333c6d22b59" artifact_version_id="6e24c6e2-b153-4c92-9a38-3521c11e6e34" title="api/handlers/order_handler.go" contentType="text/go">
+<xaiArtifact artifact_id="c89afef6-4ccd-41f4-9078-eefaf38a2a76" artifact_version_id="646a73ec-02d6-4bc9-9fae-bec0582b198e" title="api/handlers/order_handler.go" contentType="text/go">
 ```go
 package handlers
 
@@ -1930,7 +1930,7 @@ func (h *OrderHandler) GetOrder(c *gin.Context) {
 - Lines: 291
 - Last Modified: 2025-09-19 21:21:08
 
-<xaiArtifact artifact_id="d71f698a-040f-4871-a759-27f6c5506f5e" artifact_version_id="e3bcc171-84df-4438-80df-5c310898b839" title="api/handlers/product_handler.go" contentType="text/go">
+<xaiArtifact artifact_id="254b4e98-33c9-4e79-a5c9-4892e91f88c2" artifact_version_id="81ebda49-f568-44a0-94b0-23b8784dde95" title="api/handlers/product_handler.go" contentType="text/go">
 ```go
 package handlers
 
@@ -2228,29 +2228,29 @@ func (h *ProductHandler) DeleteProduct(c *gin.Context) {
 
 ---
 ### api/routes/carts.go
-- Size: 0.76 KB
+- Size: 0.69 KB
 - Lines: 19
-- Last Modified: 2025-09-19 21:21:08
+- Last Modified: 2025-09-19 21:59:09
 
-<xaiArtifact artifact_id="d0548d2a-fa4d-4f7e-ad24-88d249a34c69" artifact_version_id="5b126e40-ee2c-4436-9366-74397654cbb0" title="api/routes/carts.go" contentType="text/go">
+<xaiArtifact artifact_id="29879f5a-7ecb-4d1a-b437-e7319a72827b" artifact_version_id="9b6135d8-84af-41c3-bda9-6df87130f374" title="api/routes/carts.go" contentType="text/go">
 ```go
 package routes
 
 import (
 	"api-customer-merchant/internal/api/handlers"
-	"api-customer-merchant/internal/middleware"
+	//"api-customer-merchant/internal/middleware"
 	"api-customer-merchant/internal/services/cart"
 	"github.com/gin-gonic/gin"
 )
 
 func SetupCartRoutes(r *gin.RouterGroup, cartService *cart.CartService) {
-	customerHandlers := handlers.NewCartHandler(cartService)
-	protected := middleware.AuthMiddleware("user")
-	r.GET("/cart", protected, customerHandlers.GetCart)
-	r.POST("/cart/items", protected, customerHandlers.AddToCart)
-	r.GET("/cart/items/:id", protected, customerHandlers.GetCartItem)
-	r.PUT("/cart/items/:id", protected, customerHandlers.UpdateCartItemQuantity)
-	r.DELETE("/cart/items/:id", protected, customerHandlers.RemoveCartItem)
+	cartHandlers := handlers.NewCartHandler(cartService)
+	//protected := middleware.AuthMiddleware("user")
+	r.GET("/cart", cartHandlers.GetCart)
+	r.POST("/cart/items",  cartHandlers.AddToCart)
+	r.GET("/cart/items/:id",  cartHandlers.GetCartItem)
+	r.PUT("/cart/items/:id",  cartHandlers.UpdateCartItemQuantity)
+	r.DELETE("/cart/items/:id",  cartHandlers.RemoveCartItem)
 	//r.POST("/cart/clear", protected, customerHandlers.ClearCart)
 }
 ```
@@ -2262,7 +2262,7 @@ func SetupCartRoutes(r *gin.RouterGroup, cartService *cart.CartService) {
 - Lines: 28
 - Last Modified: 2025-09-19 21:21:08
 
-<xaiArtifact artifact_id="048522c6-e4dd-4669-b745-0d707141e0c7" artifact_version_id="ec77c21a-1b61-4fd5-b15c-7766f2cc6851" title="api/routes/customer.go" contentType="text/go">
+<xaiArtifact artifact_id="7371f80a-ace8-47fa-a032-d3eff7062a33" artifact_version_id="3ef9e71d-e21c-428a-844a-5e54b0f5ee49" title="api/routes/customer.go" contentType="text/go">
 ```go
 package routes
 
@@ -2301,7 +2301,7 @@ package routes
 - Lines: 136
 - Last Modified: 2025-09-19 21:21:08
 
-<xaiArtifact artifact_id="0d027044-1a1b-4018-b6e6-b90fc1dd5b86" artifact_version_id="dd966dbb-4061-4b62-9282-cbfbd6427f1a" title="api/routes/merchant.go" contentType="text/go">
+<xaiArtifact artifact_id="0867aa18-e49b-4f34-9444-0c584dd0041c" artifact_version_id="8644c4f8-2766-4748-b203-e797d94f4835" title="api/routes/merchant.go" contentType="text/go">
 ```go
 package routes
 
@@ -2448,7 +2448,7 @@ func RegisterMerchantRoutes(r *gin.Engine) {
 - Lines: 15
 - Last Modified: 2025-09-19 21:21:08
 
-<xaiArtifact artifact_id="36559e86-115e-41f0-8726-fd1a71d18593" artifact_version_id="bb306867-c9e4-4e60-8a34-e074b1631a0a" title="api/routes/order_routes.go" contentType="text/go">
+<xaiArtifact artifact_id="6e3fb464-84ae-4d1b-9771-2a92993e1780" artifact_version_id="b132fafd-c8bb-4f6f-b3db-680705e3616c" title="api/routes/order_routes.go" contentType="text/go">
 ```go
 package routes
 
@@ -2475,7 +2475,7 @@ func SetupOrderRoutes(r *gin.RouterGroup, orderHandler *handlers.OrderHandler) {
 - Lines: 53
 - Last Modified: 2025-09-19 21:21:08
 
-<xaiArtifact artifact_id="a64b3a47-07f5-4586-b9e1-04e3dc100c07" artifact_version_id="535bbdee-5ad7-4e93-bec7-d27287bfaee0" title="api/routes/product_route.go" contentType="text/go">
+<xaiArtifact artifact_id="0a625f64-f729-45fe-9cb7-f19b45fa5b84" artifact_version_id="a6df0829-6f06-4f84-9491-8eb01e8ca464" title="api/routes/product_route.go" contentType="text/go">
 ```go
 package routes
 
@@ -2539,7 +2539,7 @@ func RegisterProductRoutes(r *gin.Engine) {
 - Lines: 31
 - Last Modified: 2025-09-19 21:21:08
 
-<xaiArtifact artifact_id="905ac04e-0d2e-4b46-95a6-87a93ba2871d" artifact_version_id="b2c2a27a-fa58-4057-88cd-64b0ef534f2a" title="config/config.go" contentType="text/go">
+<xaiArtifact artifact_id="b64f76e7-9410-4476-b3dc-2b82478b8f00" artifact_version_id="9c091511-625a-4404-be88-f1599b8421c2" title="config/config.go" contentType="text/go">
 ```go
 package config
 
@@ -2578,16 +2578,17 @@ type Config struct {
 
 ---
 ### db/db.go
-- Size: 6.14 KB
-- Lines: 215
-- Last Modified: 2025-09-19 21:21:08
+- Size: 6.15 KB
+- Lines: 216
+- Last Modified: 2025-09-19 21:57:15
 
-<xaiArtifact artifact_id="426700a0-8f1a-4bf1-9537-0607fbd68e4e" artifact_version_id="48a1bacb-803f-45df-844e-ef3549d211c5" title="db/db.go" contentType="text/go">
+<xaiArtifact artifact_id="b7293969-b94a-4233-8198-62f780739985" artifact_version_id="0d4f7ca8-1f1f-4bcb-8a63-b85cf61e0ea2" title="db/db.go" contentType="text/go">
 ```go
 package db
 
 import (
 	//"api-customer-merchant/internal/db/models"
+	"api-customer-merchant/internal/db/models"
 	"log"
 	"os"
 	"time"
@@ -2706,29 +2707,29 @@ func AutoMigrate() {
     //     return
     // }
 
-    // log.Println("Migrating Cart...")
-    // if err := DB.AutoMigrate(&models.Cart{}); err != nil {
-    //     log.Printf("Failed to migrate Cart: %v", err)
-    //     return
-    // }
+     log.Println("Migrating Cart...")
+     if err := DB.AutoMigrate(&models.Cart{}); err != nil {
+         log.Printf("Failed to migrate Cart: %v", err)
+         return
+     }
 
-    // log.Println("Migrating CartItem...")
-    // if err := DB.AutoMigrate(&models.CartItem{}); err != nil {
-    //     log.Printf("Failed to migrate CartItem: %v", err)
-    //     return
-    // }
+     log.Println("Migrating CartItem...")
+     if err := DB.AutoMigrate(&models.CartItem{}); err != nil {
+         log.Printf("Failed to migrate CartItem: %v", err)
+         return
+     }
 
-    // log.Println("Migrating Order...")
-    // if err := DB.AutoMigrate(&models.Order{}); err != nil {
-    //     log.Printf("Failed to migrate Order: %v", err)
-    //     return
-    // }
+     log.Println("Migrating Order...")
+     if err := DB.AutoMigrate(&models.Order{}); err != nil {
+         log.Printf("Failed to migrate Order: %v", err)
+         return
+     }
 
-    // log.Println("Migrating OrderItem...")
-    // if err := DB.AutoMigrate(&models.OrderItem{}); err != nil {
-    //     log.Printf("Failed to migrate OrderItem: %v", err)
-    //     return
-    // }
+     log.Println("Migrating OrderItem...")
+     if err := DB.AutoMigrate(&models.OrderItem{}); err != nil {
+         log.Printf("Failed to migrate OrderItem: %v", err)
+         return
+     }
 
     // log.Println("Migrating Payment...")
     // if err := DB.AutoMigrate(&models.Payment{}); err != nil {
@@ -2808,7 +2809,7 @@ func AutoMigrate() {
 - Lines: 68
 - Last Modified: 2025-09-19 21:21:08
 
-<xaiArtifact artifact_id="221f2bcb-2461-4963-a8cf-0a29bd4717d2" artifact_version_id="8886f4f6-aaca-48d3-95d7-c948fc89c334" title="db/models/cart.go" contentType="text/go">
+<xaiArtifact artifact_id="d225194a-7a42-40dd-b299-9bcb0cb1f71e" artifact_version_id="42b1705f-4ef2-4e53-a317-bb5875f681e9" title="db/models/cart.go" contentType="text/go">
 ```go
 package models
 
@@ -2887,7 +2888,7 @@ func (c *Cart) ComputeTotals() {
 - Lines: 16
 - Last Modified: 2025-09-19 21:21:08
 
-<xaiArtifact artifact_id="2b97b1d2-49a9-4257-b90b-aa870f19ea49" artifact_version_id="a8841d6e-554b-4288-bf6e-a50afa08ae37" title="db/models/cart_item.go" contentType="text/go">
+<xaiArtifact artifact_id="8dea3499-75ba-43d9-a5a2-41c24f67de8c" artifact_version_id="9053ecb4-4008-4592-9518-6279e281ddb1" title="db/models/cart_item.go" contentType="text/go">
 ```go
 package models
 
@@ -2914,7 +2915,7 @@ type CartItem struct {
 - Lines: 13
 - Last Modified: 2025-09-19 21:21:08
 
-<xaiArtifact artifact_id="fe97bf26-802b-41a3-bb8b-653cade7c6e7" artifact_version_id="b1128df5-3a21-4948-a0b2-eab811d6da25" title="db/models/category.go" contentType="text/go">
+<xaiArtifact artifact_id="0b491ae5-b90c-425c-9157-c69b910663ec" artifact_version_id="b3703f1d-ecef-4925-95d4-8b9f656ccfee" title="db/models/category.go" contentType="text/go">
 ```go
 package models
 
@@ -2938,7 +2939,7 @@ type Category struct {
 - Lines: 13
 - Last Modified: 2025-09-19 21:21:08
 
-<xaiArtifact artifact_id="b45abcd2-902d-4e39-b1d4-2bd1994e48fd" artifact_version_id="4eebbab6-aec0-435d-8b28-3e5f865757be" title="db/models/inventory.go" contentType="text/go">
+<xaiArtifact artifact_id="550829c9-2743-46d4-a7af-8e0f5956be9c" artifact_version_id="1c39d088-bc50-467f-910b-4187d18afe0e" title="db/models/inventory.go" contentType="text/go">
 ```go
 package models
 
@@ -2962,7 +2963,7 @@ type Inventory struct {
 - Lines: 179
 - Last Modified: 2025-09-19 21:21:08
 
-<xaiArtifact artifact_id="3a34e584-e0d7-4b8e-85ca-aa40db9512ed" artifact_version_id="a41a2dc2-e606-4d1a-9ba1-59c95ab44d93" title="db/models/merchant.go" contentType="text/go">
+<xaiArtifact artifact_id="431b8a27-5178-4384-bcb7-0262b257ccd5" artifact_version_id="6434c98e-90d4-4e56-bbf3-e022fc5cd8ee" title="db/models/merchant.go" contentType="text/go">
 ```go
 package models
 
@@ -3148,11 +3149,11 @@ func (Merchant) TableName() string {
 
 ---
 ### db/models/order.go
-- Size: 1.16 KB
-- Lines: 49
-- Last Modified: 2025-09-19 21:21:08
+- Size: 1.24 KB
+- Lines: 50
+- Last Modified: 2025-09-19 21:48:48
 
-<xaiArtifact artifact_id="879b0833-787d-4f65-9bf8-e51f3b6ba6d2" artifact_version_id="ce485580-31fd-47f9-ac71-3b545b9b5c12" title="db/models/order.go" contentType="text/go">
+<xaiArtifact artifact_id="e9e01809-fba5-4b58-acc2-1b3f090474a4" artifact_version_id="8bf9ca64-787a-45d6-a26e-b388998a308e" title="db/models/order.go" contentType="text/go">
 ```go
 package models
 
@@ -3186,6 +3187,7 @@ type Order struct {
 	TotalAmount float64     `gorm:"type:decimal(10,2);not null" json:"total_amount"`
 	Status      OrderStatus `gorm:"type:varchar(20);not null;default:'Pending'" json:"status"`
 	User        User        `gorm:"foreignKey:UserID"`
+	OrderItems    []OrderItem   `gorm:"foreignKey:ProductID" json:"media,omitempty"`
 }
 
 // BeforeCreate validates the Status field
@@ -3212,7 +3214,7 @@ func (o *Order) BeforeUpdate(tx *gorm.DB) error {
 - Lines: 73
 - Last Modified: 2025-09-19 21:21:08
 
-<xaiArtifact artifact_id="71cc968d-ad70-4eda-9c47-4cdb58d3645f" artifact_version_id="8d22dcfb-88de-4d86-bf1f-3ac3b8bf0f0e" title="db/models/order_item.go" contentType="text/go">
+<xaiArtifact artifact_id="9519cbae-1780-426b-881a-92f57373cf72" artifact_version_id="9787bd6d-5cab-415c-b5a6-68bdbe635bf8" title="db/models/order_item.go" contentType="text/go">
 ```go
 package models
 
@@ -3296,7 +3298,7 @@ func (oi *OrderItem) BeforeUpdate(tx *gorm.DB) error {
 - Lines: 49
 - Last Modified: 2025-09-19 21:21:08
 
-<xaiArtifact artifact_id="7fec1155-b841-409f-a97d-0e5a1b90ef41" artifact_version_id="510b97b7-f428-4de1-8be6-c169042a4e33" title="db/models/payment.go" contentType="text/go">
+<xaiArtifact artifact_id="552d9b63-ce01-47c2-84f4-5a93a6fe6708" artifact_version_id="d690e554-c335-467a-b177-f68cf3b01738" title="db/models/payment.go" contentType="text/go">
 ```go
 package models
 
@@ -3356,7 +3358,7 @@ func (p *Payment) BeforeUpdate(tx *gorm.DB) error {
 - Lines: 49
 - Last Modified: 2025-09-19 21:21:08
 
-<xaiArtifact artifact_id="e0256e32-b455-4281-b95e-814456d8ffc7" artifact_version_id="d4e579ab-8fd9-4446-8c3d-f5ba6f1ffd36" title="db/models/payout.go" contentType="text/go">
+<xaiArtifact artifact_id="12a9f6cb-40ee-4ab9-ad36-eb498c8c1bea" artifact_version_id="07ecc302-edc0-475c-b1e1-e05c694865bc" title="db/models/payout.go" contentType="text/go">
 ```go
 package models
 
@@ -3416,7 +3418,7 @@ func (p *Payout) BeforeUpdate(tx *gorm.DB) error {
 - Lines: 124
 - Last Modified: 2025-09-19 21:21:08
 
-<xaiArtifact artifact_id="71773c92-d16c-497e-8814-fdf23631a386" artifact_version_id="4594e241-73a2-493c-9cee-fe5ffe9ae322" title="db/models/product.go" contentType="text/go">
+<xaiArtifact artifact_id="c5e593d1-8b96-4df0-a0d8-6575b21a663b" artifact_version_id="72b8e95e-6b38-4ac1-bb0c-c5da41d019c7" title="db/models/product.go" contentType="text/go">
 ```go
 package models
 
@@ -3551,7 +3553,7 @@ func (m *Media) BeforeCreate(tx *gorm.DB) error {
 - Lines: 153
 - Last Modified: 2025-09-19 21:21:08
 
-<xaiArtifact artifact_id="df48d4fd-e2da-41e4-8428-822369084f44" artifact_version_id="4a46b036-bfe8-4f3b-acdf-2ca1d9cbcee6" title="db/models/product2.go" contentType="text/go">
+<xaiArtifact artifact_id="59380bac-e32e-49b1-8774-f59b1e0128c5" artifact_version_id="19049ff3-d1ce-432a-ac54-76c792b70080" title="db/models/product2.go" contentType="text/go">
 ```go
 package models
 
@@ -3715,7 +3717,7 @@ func (m *Media) BeforeCreate(tx *gorm.DB) error {
 - Lines: 15
 - Last Modified: 2025-09-19 21:21:08
 
-<xaiArtifact artifact_id="87a3e2b3-f0a7-4827-ae36-bc82bf730972" artifact_version_id="46ecfd9c-88cc-47b5-b32e-228797122c62" title="db/models/user.go" contentType="text/go">
+<xaiArtifact artifact_id="0641df26-c3ba-4001-a278-f58cf34386b8" artifact_version_id="9b4f7989-ec28-4b0b-bce3-7c4d252bae61" title="db/models/user.go" contentType="text/go">
 ```go
 package models
 
@@ -3741,7 +3743,7 @@ type User struct {
 - Lines: 121
 - Last Modified: 2025-09-19 21:21:08
 
-<xaiArtifact artifact_id="d12262b0-21d8-483f-99b8-4cce594ee3a6" artifact_version_id="78962c5b-b0b1-4ac7-a96f-70254b5bb2f4" title="db/repositories/cart_item_repositry.go" contentType="text/go">
+<xaiArtifact artifact_id="634a4bfc-7c8c-40a7-bf2b-3363f32c0ecd" artifact_version_id="b4b5da5e-148d-4d7d-8f75-6d9dc96edbfb" title="db/repositories/cart_item_repositry.go" contentType="text/go">
 ```go
 package repositories
 
@@ -3873,7 +3875,7 @@ func (r *CartItemRepository) Delete(ctx context.Context, id uint) error {
 - Lines: 90
 - Last Modified: 2025-09-19 21:21:08
 
-<xaiArtifact artifact_id="fc11c6f4-462f-428c-9c08-d2f84c046dd1" artifact_version_id="1cc24928-803b-4c5d-9b63-ceec96b2d83e" title="db/repositories/cart_repositry.go" contentType="text/go">
+<xaiArtifact artifact_id="2e41f28f-751a-4f3b-9c94-e0228c0abbfe" artifact_version_id="a860e480-76de-496b-934d-6473c79224ab" title="db/repositories/cart_repositry.go" contentType="text/go">
 ```go
 package repositories
 
@@ -3974,7 +3976,7 @@ func (r *CartRepository) Delete(ctx context.Context, id uint) error {
 - Lines: 45
 - Last Modified: 2025-09-19 21:21:08
 
-<xaiArtifact artifact_id="8a4a21a2-c1a1-460b-a872-9c8e381b9d96" artifact_version_id="c2adeaf9-29e4-4a7c-a06e-4d1f0a463451" title="db/repositories/category_repositry.go" contentType="text/go">
+<xaiArtifact artifact_id="ec3c1015-5b03-434d-8fba-4c8c1a4e253b" artifact_version_id="4bd4082e-1cb4-4ee4-abc0-3791340fd91f" title="db/repositories/category_repositry.go" contentType="text/go">
 ```go
 package repositories
 
@@ -4030,7 +4032,7 @@ func (r *CategoryRepository) Delete(id uint) error {
 - Lines: 51
 - Last Modified: 2025-09-19 21:21:08
 
-<xaiArtifact artifact_id="9ae2e7dc-03b5-48e8-a9a9-3855869759d6" artifact_version_id="311e13a4-0f7d-4069-92d9-472057ae2ef5" title="db/repositories/inventory_repository.go" contentType="text/go">
+<xaiArtifact artifact_id="091e4f6c-00cc-4627-bdfb-05da7aa7b669" artifact_version_id="8201cbfb-5fea-4083-952f-f5d7a0b653d2" title="db/repositories/inventory_repository.go" contentType="text/go">
 ```go
 package repositories
 
@@ -4092,7 +4094,7 @@ func (r *InventoryRepository) Delete(id uint) error {
 - Lines: 80
 - Last Modified: 2025-09-19 21:21:08
 
-<xaiArtifact artifact_id="2e903573-55d2-4245-87ca-ca8afaa6b893" artifact_version_id="61409ab1-814b-4eee-93e9-5ba798fc2312" title="db/repositories/merchant_repositry.go" contentType="text/go">
+<xaiArtifact artifact_id="b0d3735f-2c49-494b-bf79-6582cc68fcd3" artifact_version_id="b357965d-1799-46bc-bb94-f1305334e226" title="db/repositories/merchant_repositry.go" contentType="text/go">
 ```go
 package repositories
 
@@ -4183,7 +4185,7 @@ func (r *MerchantRepository)GetByWorkEmail(ctx context.Context, email string) (*
 - Lines: 45
 - Last Modified: 2025-09-19 21:21:08
 
-<xaiArtifact artifact_id="e1dd7c62-3a7d-492d-bbf2-23f36ca8cf49" artifact_version_id="cd0af4da-509f-47ab-ab05-b66d5adb4884" title="db/repositories/order_item_repository.go" contentType="text/go">
+<xaiArtifact artifact_id="2be4632d-2546-4e0b-8bb6-5ddf6a1ddeb7" artifact_version_id="3b6df042-8db5-418e-b67b-5b8b9caaae94" title="db/repositories/order_item_repository.go" contentType="text/go">
 ```go
 package repositories
 
@@ -4235,11 +4237,11 @@ func (r *OrderItemRepository) Delete(id uint) error {
 
 ---
 ### db/repositories/order_repository.go
-- Size: 1.83 KB
+- Size: 1.87 KB
 - Lines: 59
-- Last Modified: 2025-09-19 21:21:08
+- Last Modified: 2025-09-19 21:50:43
 
-<xaiArtifact artifact_id="f6e3a2c5-001c-45de-9d28-68b4092f817d" artifact_version_id="f5683a65-7752-48d0-98a6-694868236b04" title="db/repositories/order_repository.go" contentType="text/go">
+<xaiArtifact artifact_id="860c5001-d3e3-4e94-938e-d30e66961b09" artifact_version_id="d4c240ae-89f6-4adb-9f99-a0b14628234b" title="db/repositories/order_repository.go" contentType="text/go">
 ```go
 package repositories
 
@@ -4269,10 +4271,10 @@ func (r *OrderRepository) Create(ctx context.Context, order *models.Order) error
 }
 
 // FindByID retrieves an order by ID with associated User and OrderItems
-func (r *OrderRepository) FindByID(id uint) (*models.Order, error) {
+func (r *OrderRepository) FindByID(ctx context.Context, id uint) (*models.Order, error) {
 	var order models.Order
 	//err := r.db.Preload("User").Preload("OrderItems.Product.Merchant").First(&order, id).Error
-	err := r.db.Preload("User").Preload("OrderItems").Preload("OrderItems.Product").Preload("OrderItems.Merchant").First(&order, id).Error
+	err := r.db.WithContext(ctx).Preload("User").Preload("OrderItems").Preload("OrderItems.Product").Preload("OrderItems.Merchant").First(&order, id).Error
 	return &order, err
 }
 
@@ -4309,7 +4311,7 @@ func (r *OrderRepository) Delete(id uint) error {
 - Lines: 52
 - Last Modified: 2025-09-19 21:21:08
 
-<xaiArtifact artifact_id="d006e004-72ff-4704-9c39-85e512c1efd0" artifact_version_id="7c7291bf-8e2c-4cb0-af4f-2fd9e6ec0f3e" title="db/repositories/payment_repository.go" contentType="text/go">
+<xaiArtifact artifact_id="17eec709-7d12-4a54-bd51-b34d3fbc865c" artifact_version_id="2f6a1ef9-04ce-47cd-bdfe-10cac7b05790" title="db/repositories/payment_repository.go" contentType="text/go">
 ```go
 package repositories
 
@@ -4372,7 +4374,7 @@ func (r *PaymentRepository) Delete(id uint) error {
 - Lines: 45
 - Last Modified: 2025-09-19 21:21:08
 
-<xaiArtifact artifact_id="ee20a211-4c2f-4c77-9c28-43bab7605428" artifact_version_id="63a4d604-159d-491b-9891-e5fd8533a8a6" title="db/repositories/payout_repository.go" contentType="text/go">
+<xaiArtifact artifact_id="98a7f78e-9cb1-46ef-8be4-f72d50ee814e" artifact_version_id="83ca0ba0-6590-4821-ae07-c03d056649e9" title="db/repositories/payout_repository.go" contentType="text/go">
 ```go
 package repositories
 
@@ -4428,7 +4430,7 @@ func (r *PayoutRepository) Delete(id uint) error {
 - Lines: 171
 - Last Modified: 2025-09-19 21:21:08
 
-<xaiArtifact artifact_id="8ea92b27-b17b-4e19-b585-1a80f414b405" artifact_version_id="9ae76b96-3dde-46f0-b4ab-5d0dce5385aa" title="db/repositories/product_repo.go" contentType="text/go">
+<xaiArtifact artifact_id="3c80fe79-adac-413e-8c79-f3d40f2e0e78" artifact_version_id="b0cdfd77-bd61-4402-84d6-20745c4aaa7f" title="db/repositories/product_repo.go" contentType="text/go">
 ```go
 package repositories
 
@@ -4610,7 +4612,7 @@ func (r *ProductRepository) SoftDeleteProduct(id string) error {
 - Lines: 169
 - Last Modified: 2025-09-19 21:21:08
 
-<xaiArtifact artifact_id="570439a1-3e26-45b2-9bd5-80f81a710053" artifact_version_id="ee0770f8-edb2-465d-9e85-66a180137512" title="db/repositories/product_repositry.go" contentType="text/go">
+<xaiArtifact artifact_id="5c4870ee-0cea-4f8e-ae88-a820b5129f54" artifact_version_id="036d6c29-745a-4083-a144-770a7ee0e68f" title="db/repositories/product_repositry.go" contentType="text/go">
 ```go
 package repositories
 
@@ -4790,7 +4792,7 @@ func (r *ProductRepository) FindByCategoryWithPagination(categoryID string, limi
 - Lines: 53
 - Last Modified: 2025-09-19 21:21:08
 
-<xaiArtifact artifact_id="f606acc4-f241-460c-ae79-bac2ec03fb6f" artifact_version_id="be281e66-4b59-443f-b68f-c808fb287440" title="db/repositories/user_repository.go" contentType="text/go">
+<xaiArtifact artifact_id="25426edc-655a-4b36-93e0-c0e563878946" artifact_version_id="da25ae70-38ff-4d38-bb48-d8b53e1c024b" title="db/repositories/user_repository.go" contentType="text/go">
 ```go
 package repositories
 
@@ -4854,7 +4856,7 @@ func (r *UserRepository) Update(user *models.User) error {
 - Lines: 62
 - Last Modified: 2025-09-19 21:21:08
 
-<xaiArtifact artifact_id="7ffee559-9ccd-4eaa-a41e-e45e167e0158" artifact_version_id="e68fe0bf-1d36-47c6-868b-8d2a7af05198" title="middleware/auth.go" contentType="text/go">
+<xaiArtifact artifact_id="bcad33a3-0e37-4c76-86c5-6a88888edb54" artifact_version_id="e5aecba5-75c9-4928-8f3f-04acfb0a6d12" title="middleware/auth.go" contentType="text/go">
 ```go
 package middleware
 
@@ -4928,7 +4930,7 @@ case "user":
 - Lines: 20
 - Last Modified: 2025-09-19 21:21:08
 
-<xaiArtifact artifact_id="cafc52e7-c67e-4abc-9b6f-a0acf774782b" artifact_version_id="dcbc35dc-91fa-4ab7-9386-9d6e50f8eee5" title="middleware/rate_limit.go" contentType="text/go">
+<xaiArtifact artifact_id="97dce7f7-9974-47d7-ab7a-512dc1882580" artifact_version_id="8d5e4d7d-be84-45a6-a6f2-1b20feee7b18" title="middleware/rate_limit.go" contentType="text/go">
 ```go
 package middleware
 
@@ -4959,7 +4961,7 @@ func RateLimitMiddleware() gin.HandlerFunc {
 - Lines: 258
 - Last Modified: 2025-09-19 21:21:08
 
-<xaiArtifact artifact_id="1ff8da28-3994-4269-bd62-882880c8bb3b" artifact_version_id="8d99a906-6f55-4fd8-acaf-734dd94f8547" title="services/cart/cart_service.go" contentType="text/go">
+<xaiArtifact artifact_id="522cc82e-0749-463a-a99c-adadf69868be" artifact_version_id="84702283-dbf0-4905-aee6-fa84572bc7d1" title="services/cart/cart_service.go" contentType="text/go">
 ```go
 package cart
 
@@ -5228,7 +5230,7 @@ func (s *CartService) BulkAddItems(ctx context.Context, userID uint, items dto.B
 - Lines: 207
 - Last Modified: 2025-09-19 21:21:08
 
-<xaiArtifact artifact_id="3a4a6e1a-0025-463f-a62f-6a064b9ec126" artifact_version_id="4a1cacf7-9e42-4cd9-9e93-640b24d5fc1f" title="services/merchant/merchant_service.go" contentType="text/go">
+<xaiArtifact artifact_id="e7392bbf-dfb3-4da2-a0d8-63441f8c5b82" artifact_version_id="22937357-4e7b-438a-b693-2c53eb889d49" title="services/merchant/merchant_service.go" contentType="text/go">
 ```go
 package merchant
 
@@ -5446,7 +5448,7 @@ func (s *MerchantService) GenerateJWT(entity interface{}) (string, error) {
 - Lines: 31
 - Last Modified: 2025-09-19 21:21:08
 
-<xaiArtifact artifact_id="4d1712bc-ab78-4cd6-96c8-075e0bfee668" artifact_version_id="4205e61a-6378-4f43-875f-961c1420d2c0" title="services/notifications/notifcation_service.go" contentType="text/go">
+<xaiArtifact artifact_id="49ae36fc-6bf9-4efb-a47a-f01ae9f8d65d" artifact_version_id="f2b5d743-5eaf-4de6-83b9-615478aea6bb" title="services/notifications/notifcation_service.go" contentType="text/go">
 ```go
 package notifications
 
@@ -5486,9 +5488,9 @@ func (s *NotificationService) SendStockAlert(merchantID uint, productID uint) er
 ### services/order/order_service.go
 - Size: 8.90 KB
 - Lines: 324
-- Last Modified: 2025-09-19 21:21:08
+- Last Modified: 2025-09-19 21:51:30
 
-<xaiArtifact artifact_id="091a4b3b-3a3a-42d7-86b3-e8dcca7f27dd" artifact_version_id="0fa7c1b0-35d7-45b9-a4b4-b1799ab55a9d" title="services/order/order_service.go" contentType="text/go">
+<xaiArtifact artifact_id="bd72086e-ea21-44af-bcbf-e74a85a967f5" artifact_version_id="3b01a637-83e7-4489-9d28-e99bf965c877" title="services/order/order_service.go" contentType="text/go">
 ```go
 //package order
 
@@ -5743,7 +5745,7 @@ func (s *OrderService) CreateOrder(ctx context.Context, userID uint) (*dto.Order
 					"quantity":          gorm.Expr("quantity - ?", item.Quantity),
 					"reserved_quantity": gorm.Expr("reserved_quantity - ?", item.Quantity),
 				}).Error; err != nil {
-				return fmt.Errorf("failed to commit stock for product %d: %w", item.ProductID, err)
+				return fmt.Errorf("failed to commit stock for product %s: %w", item.ProductID, err)
 			}
 		}
 
@@ -5812,7 +5814,7 @@ func (s *OrderService) GetOrder(ctx context.Context, id uint) (*models.Order, er
 	}
 	// The repository already preloads necessary associations.
 	return s.orderRepo.FindByID(ctx, id)
-	return s.orderRepo.FindByID(id)
+	//return s.orderRepo.FindByID(id)
 }
 
 ```
@@ -5820,18 +5822,19 @@ func (s *OrderService) GetOrder(ctx context.Context, id uint) (*models.Order, er
 
 ---
 ### services/payment/payment_service.go
-- Size: 2.50 KB
-- Lines: 96
-- Last Modified: 2025-09-19 21:21:08
+- Size: 2.54 KB
+- Lines: 97
+- Last Modified: 2025-09-19 21:51:57
 
-<xaiArtifact artifact_id="e8dcb1c0-79cd-4252-9b6e-2c6d14f37c66" artifact_version_id="4ff05248-7843-409f-ade7-ab5ba6b18d92" title="services/payment/payment_service.go" contentType="text/go">
+<xaiArtifact artifact_id="bdb0557b-0e3c-4dc3-b5b2-11d361816b90" artifact_version_id="e910e97f-7c9f-49fa-ba91-37fc20489c7a" title="services/payment/payment_service.go" contentType="text/go">
 ```go
 package payment
 
 import (
-	"errors"
 	"api-customer-merchant/internal/db/models"
 	"api-customer-merchant/internal/db/repositories"
+	"context"
+	"errors"
 )
 
 type PaymentService struct {
@@ -5847,7 +5850,7 @@ func NewPaymentService(paymentRepo *repositories.PaymentRepository, orderRepo *r
 }
 
 // ProcessPayment creates a payment for an order (placeholder for Stripe)
-func (s *PaymentService) ProcessPayment(orderID uint, amount float64) (*models.Payment, error) {
+func (s *PaymentService) ProcessPayment(ctx context.Context, orderID uint, amount float64) (*models.Payment, error) {
 	if orderID == 0 {
 		return nil, errors.New("invalid order ID")
 	}
@@ -5856,7 +5859,7 @@ func (s *PaymentService) ProcessPayment(orderID uint, amount float64) (*models.P
 	}
 
 	// Verify order exists
-	order, err := s.orderRepo.FindByID(orderID)
+	order, err := s.orderRepo.FindByID(ctx,orderID)
 	if err != nil {
 		return nil, errors.New("order not found")
 	}
@@ -5931,7 +5934,7 @@ func (s *PaymentService) UpdatePaymentStatus(paymentID uint, status string) (*mo
 - Lines: 62
 - Last Modified: 2025-09-19 21:21:08
 
-<xaiArtifact artifact_id="1da4e0d1-33f6-4694-a8e2-330050497ae3" artifact_version_id="76c429d1-73ea-4686-9690-751ed303c153" title="services/payout/payout_service.go" contentType="text/go">
+<xaiArtifact artifact_id="6755782f-fd82-4d12-b70b-b4480885a082" artifact_version_id="98277fb4-eb58-4534-b01c-ffbd82733576" title="services/payout/payout_service.go" contentType="text/go">
 ```go
 package payout
 
@@ -6004,7 +6007,7 @@ func (s *PayoutService) GetPayoutsByMerchantID(merchantID uint) ([]models.Payout
 - Lines: 41
 - Last Modified: 2025-09-19 21:21:08
 
-<xaiArtifact artifact_id="f9da814f-7bd8-4533-98f3-4686e4263303" artifact_version_id="92a98f33-67db-41c1-af62-4ea181a17324" title="services/pricing/pricing_service.go" contentType="text/go">
+<xaiArtifact artifact_id="e586a0c2-758c-484b-8218-60ed1f29bfb7" artifact_version_id="6b26e360-2795-4fdf-a2a7-a61b8f55f069" title="services/pricing/pricing_service.go" contentType="text/go">
 ```go
 package pricing
 /*
@@ -6056,7 +6059,7 @@ func (s *PricingService) ApplyPromotion(cart *models.Cart, code string) (float64
 - Lines: 317
 - Last Modified: 2025-09-19 21:21:08
 
-<xaiArtifact artifact_id="daaad17c-0d19-4361-8081-ce4162cb8331" artifact_version_id="4b3eec0f-f54e-4cc6-b415-9f16dfe9070c" title="services/product/product_service.go" contentType="text/go">
+<xaiArtifact artifact_id="08a56441-f27c-4594-b267-5bed97899116" artifact_version_id="c99f3392-87d4-4335-bce2-bb7803f72b76" title="services/product/product_service.go" contentType="text/go">
 ```go
 package product
 
@@ -6384,7 +6387,7 @@ func (s *ProductService) GetProductsByMerchantID(merchantID string) ([]models.Pr
 - Lines: 421
 - Last Modified: 2025-09-19 21:21:08
 
-<xaiArtifact artifact_id="cabfe649-63f5-4c40-b624-623af225a901" artifact_version_id="80990934-457e-4f87-9f09-10301ed13e32" title="services/product/service_product.go" contentType="text/go">
+<xaiArtifact artifact_id="6ce617d7-2ca4-43b5-9418-f677fbfec3be" artifact_version_id="44e40229-4480-4f42-9d1e-456ad44006bd" title="services/product/service_product.go" contentType="text/go">
 ```go
 package product
 
@@ -6816,7 +6819,7 @@ func (s *ProductService) DeleteProduct(ctx context.Context, id string) error {
 - Lines: 242
 - Last Modified: 2025-09-19 21:21:08
 
-<xaiArtifact artifact_id="f34c3778-929b-4947-ac69-6ea54b82a564" artifact_version_id="287371d4-3eac-4d70-bea4-bcd33d24f39a" title="services/user/user_service.go" contentType="text/go">
+<xaiArtifact artifact_id="b8b7955e-9242-428b-9fb0-91d804d03f85" artifact_version_id="e54012fd-ddf0-4213-921c-1a242ccbac30" title="services/user/user_service.go" contentType="text/go">
 ```go
 package user
 
@@ -7069,7 +7072,7 @@ func (s *AuthService) ResetPassword(email, newPassword string) error {
 - Lines: 1
 - Last Modified: 2025-09-19 21:21:08
 
-<xaiArtifact artifact_id="54c0665b-e553-4099-84f8-cbd27676d675" artifact_version_id="34bd6e7d-8500-457c-a929-cc7d867b2eaf" title="tests/unit/test_handlers.go" contentType="text/go">
+<xaiArtifact artifact_id="2e958e76-5345-4cc1-8632-60fc4dd3d603" artifact_version_id="b0a62d2b-2fd4-43cb-98d5-ee625a86f093" title="tests/unit/test_handlers.go" contentType="text/go">
 ```go
 package unit
 ```
@@ -7081,7 +7084,7 @@ package unit
 - Lines: 1
 - Last Modified: 2025-09-19 21:21:08
 
-<xaiArtifact artifact_id="68217d56-d291-40f3-968a-04e0ab484a4d" artifact_version_id="c8d35bdc-6d2b-4108-93df-e7e44babda57" title="tests/unit/test_service.go" contentType="text/go">
+<xaiArtifact artifact_id="c81f954e-de9e-40af-9cd2-5e4f9aa92cad" artifact_version_id="f82d04d0-813d-41be-b019-eacd04534ad7" title="tests/unit/test_service.go" contentType="text/go">
 ```go
 package unit
 
@@ -7094,7 +7097,7 @@ package unit
 - Lines: 560
 - Last Modified: 2025-09-19 21:41:15
 
-<xaiArtifact artifact_id="d4107833-abb1-49e1-ae6c-f9a87adb1324" artifact_version_id="fb4dfcc9-5103-4d08-9407-49443ea4eedf" title="tests/unit/cart_service_test.go" contentType="text/go">
+<xaiArtifact artifact_id="11c03662-3642-47d2-8ac8-b8948420ad93" artifact_version_id="21fa9760-ecce-47c2-87bc-8486058e748d" title="tests/unit/cart_service_test.go" contentType="text/go">
 ```go
 package unit
 /*
@@ -7665,7 +7668,7 @@ func TestBulkAddItems_PartialFailure(t *testing.T) {
 - Lines: 32
 - Last Modified: 2025-09-19 21:21:08
 
-<xaiArtifact artifact_id="68093230-02a1-4eea-a57c-2f00d403ff46" artifact_version_id="8e081c52-d8ed-4252-a438-ad96b2a3be60" title="utils/blacklist.go" contentType="text/go">
+<xaiArtifact artifact_id="ee01162e-e457-486e-9154-7b93911a151e" artifact_version_id="97b3aac6-0641-4a07-8f96-bf998d293f2d" title="utils/blacklist.go" contentType="text/go">
 ```go
 package utils
 
@@ -7708,7 +7711,7 @@ func IsBlacklisted(token string) bool {
 - Lines: 56
 - Last Modified: 2025-09-19 21:21:08
 
-<xaiArtifact artifact_id="8aa788ef-beff-4467-9058-8b49b41811d7" artifact_version_id="44480661-3224-4542-810f-ba4e9932e181" title="utils/redis.go" contentType="text/go">
+<xaiArtifact artifact_id="6ce65764-7db5-4b45-9591-279a12f342c0" artifact_version_id="c0006d9d-9d0f-429d-8db7-fec5fe51dc39" title="utils/redis.go" contentType="text/go">
 ```go
 package utils
 
@@ -7774,5 +7777,5 @@ func GetOrSetCache(ctx context.Context, key string, ttl time.Duration, fetch fun
 ---
 ## 📊 Summary
 - Total files: 58
-- Total size: 216.44 KB
+- Total size: 216.54 KB
 - File types: .go

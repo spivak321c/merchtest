@@ -2,6 +2,7 @@ package db
 
 import (
 	//"api-customer-merchant/internal/db/models"
+	//"api-customer-merchant/internal/db/models"
 	"log"
 	"os"
 	"time"
@@ -120,29 +121,29 @@ func AutoMigrate() {
     //     return
     // }
 
-    // log.Println("Migrating Cart...")
-    // if err := DB.AutoMigrate(&models.Cart{}); err != nil {
-    //     log.Printf("Failed to migrate Cart: %v", err)
-    //     return
-    // }
+    //  log.Println("Migrating Cart...")
+    //  if err := DB.AutoMigrate(&models.Cart{}); err != nil {
+    //      log.Printf("Failed to migrate Cart: %v", err)
+    //      return
+    //  }
 
-    // log.Println("Migrating CartItem...")
-    // if err := DB.AutoMigrate(&models.CartItem{}); err != nil {
-    //     log.Printf("Failed to migrate CartItem: %v", err)
-    //     return
-    // }
+    //  log.Println("Migrating CartItem...")
+    //  if err := DB.AutoMigrate(&models.CartItem{}); err != nil {
+    //      log.Printf("Failed to migrate CartItem: %v", err)
+    //      return
+    //  }
 
-    // log.Println("Migrating Order...")
-    // if err := DB.AutoMigrate(&models.Order{}); err != nil {
-    //     log.Printf("Failed to migrate Order: %v", err)
-    //     return
-    // }
+    //  log.Println("Migrating Order...")
+    //  if err := DB.AutoMigrate(&models.Order{}); err != nil {
+    //      log.Printf("Failed to migrate Order: %v", err)
+    //      return
+    //  }
 
-    // log.Println("Migrating OrderItem...")
-    // if err := DB.AutoMigrate(&models.OrderItem{}); err != nil {
-    //     log.Printf("Failed to migrate OrderItem: %v", err)
-    //     return
-    // }
+    //  log.Println("Migrating OrderItem...")
+    //  if err := DB.AutoMigrate(&models.OrderItem{}); err != nil {
+    //      log.Printf("Failed to migrate OrderItem: %v", err)
+    //      return
+    //  }
 
     // log.Println("Migrating Payment...")
     // if err := DB.AutoMigrate(&models.Payment{}); err != nil {

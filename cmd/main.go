@@ -5,8 +5,11 @@ import (
 	"log"
 	"os"
 
-	 "api-customer-merchant/internal/api/routes"
+	//"api-customer-merchant/internal/api/handlers"
+	"api-customer-merchant/internal/api/routes"
 	"api-customer-merchant/internal/config"
+	//"api-customer-merchant/internal/services/cart"
+	//"api-customer-merchant/internal/services/order"
 
 	//"api-customer-merchant/internal/middleware"
 	"api-customer-merchant/internal/db"
@@ -16,7 +19,6 @@ import (
 	"github.com/joho/godotenv"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
-
 	//_ "api-customer-merchant/docs" // Import generated docs
 )
 
@@ -67,6 +69,8 @@ func main() {
 	routes.RegisterCustomerRoutes(r)
     //routes.RegisterMerchantRoutes(r)
 	routes.RegisterProductRoutes(r)
+	routes.SetupOrderRoutes(r)
+	routes.SetupCartRoutes(r)
 
 	// Swagger endpoint
 	// Serve the OpenAPI spec file
