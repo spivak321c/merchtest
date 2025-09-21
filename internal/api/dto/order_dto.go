@@ -10,16 +10,15 @@ type CreateOrderRequest struct {
 
 // OrderResponse defines the structure for order-related responses.
 type OrderResponse struct {
-	ID            uint            `json:"id"`
-	UserID        uint            `json:"user_id"`
-	Status        string          `json:"status"` // Consider using the models.OrderStatus type directly
-	OrderItems    []OrderItemResponse `json:"order_items"`
+	ID         uint                `json:"id"`
+	UserID     uint                `json:"user_id"`
+	Status     string              `json:"status"` // Consider using the models.OrderStatus type directly
+	OrderItems []OrderItemResponse `json:"order_items"`
 }
 
 // OrderItemResponse defines the structure for individual items in an order.
 type OrderItemResponse struct {
-	ProductID         string  `json:"product_id"`
-	Quantity          int     `json:"quantity"`
-	Price             float64 `json:"price"`
+	ProductID string  `json:"product_id"`
+	Quantity  int     `json:"quantity"`
+	Price     float64 `json:"price"`
 }
-

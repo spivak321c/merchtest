@@ -74,27 +74,6 @@ func (r *ProductRepository) FindByCategoryWithPagination(categoryID uint, limit,
 }
 */
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 /*
 type ProductRepository struct {
 	db *gorm.DB

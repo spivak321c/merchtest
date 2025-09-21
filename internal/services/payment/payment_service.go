@@ -29,7 +29,7 @@ func (s *PaymentService) ProcessPayment(ctx context.Context, orderID uint, amoun
 	}
 
 	// Verify order exists
-	order, err := s.orderRepo.FindByID(ctx,orderID)
+	order, err := s.orderRepo.FindByID(ctx, orderID)
 	if err != nil {
 		return nil, errors.New("order not found")
 	}

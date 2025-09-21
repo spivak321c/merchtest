@@ -21,10 +21,10 @@ import (
 func main() {
 	// Connect to DB
 	// dsn := os.Getenv("DB_DSN")
-    // if dsn == "" {
-    //     log.Fatal("DB_DSN environment variable not set")
-    // }
-	dsn:="postgresql://neondb_owner:npg_CcwoeLb6V1XH@ep-wild-haze-adu0bdvq-pooler.c-2.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require"
+	// if dsn == "" {
+	//     log.Fatal("DB_DSN environment variable not set")
+	// }
+	dsn := "postgresql://neondb_owner:npg_CcwoeLb6V1XH@ep-wild-haze-adu0bdvq-pooler.c-2.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require"
 
 	db, err := gorm.Open(postgres.New(postgres.Config{DSN: dsn}), &gorm.Config{})
 	if err != nil {
@@ -53,7 +53,7 @@ func main() {
 	// }
 
 	// Seed Merchant
-	
+
 	// Seed Categories
 	//  category := models.Category{
 	//  	Name:       "Electronics",
@@ -64,35 +64,35 @@ func main() {
 	//  }
 
 	// Seed Products
-/*
-	 product1 := models.Product{
-	 	ID:         uuid.New().String(),
-	 	MerchantID: "68a63ffc-f988-47a3-bc74-989b498b1e01",
-	 	CategoryID: 1,
-	 	Name:       "Smartphone",
-	 	SKU:        "SM-001",
-	 	BasePrice:      699.99,
-	 	Media:      []models.Media{{URL: "image1.png"},{URL: "image2.png"}},
-		Variants: []models.Variant{
-        {
-            SKU:   "SNKR-001-BLK-42",
-            Price: 79.99,
-            Attributes: map[string]string{
-                "color": "black",
-                "size":  "42",
-            },
-        },
-        {
-            SKU:   "SNKR-001-WHT-43",
-            Price: 84.99,
-            Attributes: map[string]string{
-                "color": "white",
-                "size":  "43",
-            },
-        },
-    },
-	 }
-*/
+	/*
+	   	 product1 := models.Product{
+	   	 	ID:         uuid.New().String(),
+	   	 	MerchantID: "68a63ffc-f988-47a3-bc74-989b498b1e01",
+	   	 	CategoryID: 1,
+	   	 	Name:       "Smartphone",
+	   	 	SKU:        "SM-001",
+	   	 	BasePrice:      699.99,
+	   	 	Media:      []models.Media{{URL: "image1.png"},{URL: "image2.png"}},
+	   		Variants: []models.Variant{
+	           {
+	               SKU:   "SNKR-001-BLK-42",
+	               Price: 79.99,
+	               Attributes: map[string]string{
+	                   "color": "black",
+	                   "size":  "42",
+	               },
+	           },
+	           {
+	               SKU:   "SNKR-001-WHT-43",
+	               Price: 84.99,
+	               Attributes: map[string]string{
+	                   "color": "white",
+	                   "size":  "43",
+	               },
+	           },
+	       },
+	   	 }
+	*/
 	//  product2 := models.Product{
 	//  	ID:         uuid.New().String(),
 	//  	MerchantID: merchantID,
@@ -103,7 +103,6 @@ func main() {
 	//  	Currency:   "USD",
 	//  	IsActive:   true,
 	//  }
-
 
 	product2 := models.Product{
 		ID:          uuid.New().String(),
@@ -125,13 +124,13 @@ func main() {
 		},
 		Variants: []models.Variant{
 			{
-				ProductID:      "", // Will be set automatically after product creation
-				SKU:            "EAR-01-BLK-64",
+				ProductID:       "", // Will be set automatically after product creation
+				SKU:             "EAR-01-BLK-64",
 				PriceAdjustment: decimal.NewFromFloat(50.00),
-				TotalPrice:     decimal.NewFromFloat(0.00), // Will be computed in BeforeCreate
+				TotalPrice:      decimal.NewFromFloat(0.00), // Will be computed in BeforeCreate
 				Attributes: models.AttributesMap{
 					"color": "black",
-					"size": "large",
+					"size":  "large",
 				},
 				IsActive: true,
 				Inventory: models.VendorInventory{
@@ -143,13 +142,13 @@ func main() {
 				},
 			},
 			{
-				ProductID:      "", // Will be set automatically after product creation
-				SKU:            "EAR-001-WHT-128",
+				ProductID:       "", // Will be set automatically after product creation
+				SKU:             "EAR-001-WHT-128",
 				PriceAdjustment: decimal.NewFromFloat(50.00),
-				TotalPrice:     decimal.NewFromFloat(0.00), // Will be computed in BeforeCreate
+				TotalPrice:      decimal.NewFromFloat(0.00), // Will be computed in BeforeCreate
 				Attributes: models.AttributesMap{
 					"color": "white",
-					"size": "medium",
+					"size":  "medium",
 				},
 				IsActive: true,
 				Inventory: models.VendorInventory{
@@ -162,9 +161,9 @@ func main() {
 			},
 		},
 	}
-	 if err := db.Create([]*models.Product{&product2}).Error; err != nil {
-	 	log.Fatalf("Failed to seed products: %v", err)
-	 }
+	if err := db.Create([]*models.Product{&product2}).Error; err != nil {
+		log.Fatalf("Failed to seed products: %v", err)
+	}
 
 	// // Seed Inventory
 	// inventory1 := models.Inventory{

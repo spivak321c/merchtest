@@ -1,10 +1,9 @@
 package payout
 
-
 import (
-	"errors"
 	"api-customer-merchant/internal/db/models"
 	"api-customer-merchant/internal/db/repositories"
+	"errors"
 )
 
 type PayoutService struct {

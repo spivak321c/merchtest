@@ -9,9 +9,9 @@ import (
 type PaymentStatus string
 
 const (
-	PaymentStatusPending  PaymentStatus = "Pending"
+	PaymentStatusPending   PaymentStatus = "Pending"
 	PaymentStatusCompleted PaymentStatus = "Completed"
-	PaymentStatusFailed   PaymentStatus = "Failed"
+	PaymentStatusFailed    PaymentStatus = "Failed"
 )
 
 // Valid checks if the status is one of the allowed values

@@ -26,22 +26,22 @@ package routes
 */
 
 import (
-	// "api-customer-merchant/internal/api/handlers"
-	// "api-customer-merchant/internal/middleware"
-	//"api-customer-merchant/internal/db"
-	//"api-customer-merchant/internal/db/models"
-	//"api-customer-merchant/internal/db/repositories"
+// "api-customer-merchant/internal/api/handlers"
+// "api-customer-merchant/internal/middleware"
+//"api-customer-merchant/internal/db"
+//"api-customer-merchant/internal/db/models"
+//"api-customer-merchant/internal/db/repositories"
 
-	//"api-customer-merchant/internal/middleware"
-	// "api-customer-merchant/internal/services/merchant"
-	// "api-customer-merchant/internal/services/product"
+//"api-customer-merchant/internal/middleware"
+// "api-customer-merchant/internal/services/merchant"
+// "api-customer-merchant/internal/services/product"
 
-	// "api-customer-merchant/internal/domain/order"
-	// "api-customer-merchant/internal/domain/payout"
-	//"api-customer-merchant/internal/domain/product"
-	//"api-customer-merchant/internal/domain/invent"
+// "api-customer-merchant/internal/domain/order"
+// "api-customer-merchant/internal/domain/payout"
+//"api-customer-merchant/internal/domain/product"
+//"api-customer-merchant/internal/domain/invent"
 
-	//"github.com/gin-gonic/gin"
+//"github.com/gin-gonic/gin"
 )
 
 /*
@@ -78,9 +78,6 @@ import (
    }
 */
 
-
-
-
 /*
 func RegisterMerchantRoutes(r *gin.Engine) {
     appRepo := repositories.NewMerchantApplicationRepository()
@@ -98,7 +95,7 @@ func RegisterMerchantRoutes(r *gin.Engine) {
 	// payoutService := payout.NewPayoutService(nil)
 	// promotionService := promotions.NewPromotionService(nil)
     //h := handlers.NewMerchantAuthHandler(service)
-    
+
     authHandler := handlers.NewMerchantAuthHandler(service)
     merchhandler:=handlers.NewMerchantHandlers(productService)
     merchant := r.Group("/merchant")
@@ -131,6 +128,6 @@ func RegisterMerchantRoutes(r *gin.Engine) {
 
     }
 
-   
+
 }
 */

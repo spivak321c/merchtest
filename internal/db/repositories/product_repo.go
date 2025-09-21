@@ -1,9 +1,9 @@
 package repositories
 
 import (
+	"context"
 	"errors"
 	"fmt"
-	"context"
 
 	"api-customer-merchant/internal/api/dto"
 	"api-customer-merchant/internal/db"
@@ -13,9 +13,9 @@ import (
 )
 
 var (
-	ErrProductNotFound   = errors.New("product not found")
-	ErrDuplicateSKU      = errors.New("duplicate SKU")
-	ErrInvalidInventory  = errors.New("invalid inventory setup")
+	ErrProductNotFound  = errors.New("product not found")
+	ErrDuplicateSKU     = errors.New("duplicate SKU")
+	ErrInvalidInventory = errors.New("invalid inventory setup")
 )
 
 type ProductRepository struct {
@@ -164,7 +164,6 @@ func (r *ProductRepository) UpdateInventoryQuantity(inventoryID string, delta in
 		return tx.Save(&inventory).Error
 	})
 }
-
 
 func (r *ProductRepository) SoftDeleteProduct(id string) error {
 	return r.db.Where("id = ?", id).Delete(&models.Product{}).Error

@@ -9,6 +9,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 )
+
 /*
 type MerchantHandler struct {
 	service *merchant.MerchantService
@@ -114,7 +115,6 @@ func (h *MerchantHandler) GetMyMerchant(c *gin.Context) {
 }
 */
 
-
 type MerchantHandler struct {
 	service *merchant.MerchantService
 }
@@ -137,8 +137,8 @@ func NewMerchantAuthHandler(s *merchant.MerchantService) *MerchantHandler {
 func (h *MerchantHandler) Apply(c *gin.Context) {
 	var req struct {
 		models.MerchantBasicInfo
-		PersonalAddress            map[string]any `json:"personal_address" validate:"required"`
-		WorkAddress                map[string]any `json:"work_address" validate:"required"`
+		PersonalAddress map[string]any `json:"personal_address" validate:"required"`
+		WorkAddress     map[string]any `json:"work_address" validate:"required"`
 		models.MerchantBusinessInfo
 		models.MerchantDocuments
 	}
@@ -174,11 +174,10 @@ func (h *MerchantHandler) Apply(c *gin.Context) {
 	c.JSON(http.StatusCreated, app)
 }
 
-
 func (h *MerchantHandler) Login(c *gin.Context) {
 	var req struct {
-		Work_Email    string `json:"email" binding:"required,email"`
-		Password string `json:"password" binding:"required"`
+		Work_Email string `json:"email" binding:"required,email"`
+		Password   string `json:"password" binding:"required"`
 	}
 
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -186,7 +185,7 @@ func (h *MerchantHandler) Login(c *gin.Context) {
 		return
 	}
 
-	merchant, err := h.service.LoginMerchant(c.Request.Context(),req.Work_Email, req.Password)
+	merchant, err := h.service.LoginMerchant(c.Request.Context(), req.Work_Email, req.Password)
 	if err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
 		return
@@ -200,7 +199,6 @@ func (h *MerchantHandler) Login(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{"token": token})
 }
-
 
 // GetApplication godoc
 // @Summary Retrieve a merchant application by ID

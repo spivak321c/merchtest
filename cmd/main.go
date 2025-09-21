@@ -36,8 +36,8 @@ import (
 func main() {
 
 	// if err := godotenv.Load(); err != nil {
-    //          log.Println("No .env file found, relying on environment variables")
-    //      }
+	//          log.Println("No .env file found, relying on environment variables")
+	//      }
 	if err := godotenv.Load(); err != nil {
 		log.Fatal("Error loading .env file")
 	}
@@ -48,26 +48,25 @@ func main() {
 		log.Fatal("JWT_SECRET not set")
 	}
 
-		//  if err := godotenv.Load(); err != nil {
-		// 	log.Fatal("Error loading .env file")
-		// }
-		// secret := os.Getenv("JWT_SECRET")
-		// if secret == "" {
-		// 	log.Fatal("JWT_SECRET not set")
-		// }
+	//  if err := godotenv.Load(); err != nil {
+	// 	log.Fatal("Error loading .env file")
+	// }
+	// secret := os.Getenv("JWT_SECRET")
+	// if secret == "" {
+	// 	log.Fatal("JWT_SECRET not set")
+	// }
 	// Connect to database and migrate
 	db.Connect()
 	db.AutoMigrate()
 	r := gin.Default()
 	r.Use(gin.Recovery())
 
-
 	// Create single router
 	//r := gin.Default()
 
 	// Customer routes under /customer
 	routes.RegisterCustomerRoutes(r)
-    //routes.RegisterMerchantRoutes(r)
+	//routes.RegisterMerchantRoutes(r)
 	routes.RegisterProductRoutes(r)
 	routes.SetupOrderRoutes(r)
 	routes.SetupCartRoutes(r)

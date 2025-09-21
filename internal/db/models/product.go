@@ -51,7 +51,7 @@ type Product struct {
 	CategoryID  uint                 `gorm:"type:int;index" json:"category_id"` // Changed to string for UUID; revert to uint if numeric
 	CreatedAt   time.Time
 	UpdatedAt   time.Time
-	DeletedAt   gorm.DeletedAt `gorm:"index"` 
+	DeletedAt   gorm.DeletedAt `gorm:"index"`
 
 	Merchant    Merchant    `gorm:"foreignKey:MerchantID;references:id"` // Ensure Merchant.ID is string
 	Category    Category    `gorm:"foreignKey:CategoryID"` // Adjust if Category.ID is uint

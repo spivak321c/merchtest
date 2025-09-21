@@ -36,13 +36,10 @@ func (s FulfillmentStatus) Valid() error {
 // 	Merchant          Merchant          `gorm:"foreignKey:MerchantID"`
 // }
 
-
-
-
 type OrderItem struct {
 	gorm.Model
-	OrderID           uint              `gorm:"not null;index" json:"order_id"`
-	ProductID         string              `gorm:"not null;index" json:"product_id"`
+	OrderID   uint   `gorm:"not null;index" json:"order_id"`
+	ProductID string `gorm:"not null;index" json:"product_id"`
 	//ProductID         uint              `gorm:"not null;index" json:"product_id"`
 	MerchantID        string            `gorm:"not null;index" json:"merchant_id"`
 	Quantity          int               `gorm:"not null" json:"quantity"`
@@ -52,9 +49,6 @@ type OrderItem struct {
 	Product           Product           `gorm:"foreignKey:ProductID;references:ID"`
 	Merchant          Merchant          `gorm:"foreignKey:MerchantID"`
 }
-
-
-
 
 // BeforeCreate validates the FulfillmentStatus field
 func (oi *OrderItem) BeforeCreate(tx *gorm.DB) error {

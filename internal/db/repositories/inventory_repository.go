@@ -3,12 +3,14 @@ package repositories
 import (
 	"api-customer-merchant/internal/db"
 	"api-customer-merchant/internal/db/models"
+	"errors"
 
 	"context"
 
 	"gorm.io/gorm"
 )
 
+/*
 type InventoryRepository struct {
 	db *gorm.DB
 }
@@ -49,3 +51,81 @@ func (r *InventoryRepository) Delete(id uint) error {
  	return r.db.WithContext(ctx).Model(&models.Inventory{}).Where("id = ?", inventoryID).
  		Update("quantity", gorm.Expr("quantity + ?", delta)).Error
  }
+*/
+type VendorInventoryRepository struct {
+	db *gorm.DB
+}
+
+func NewVendorInventoryRepository() *VendorInventoryRepository {
+	return &VendorInventoryRepository{db: db.DB}
+}
+
+// Create adds a new vendor inventory record
+func (r *VendorInventoryRepository) Create(ctx context.Context, inv *models.VendorInventory) error {
+	return r.db.WithContext(ctx).Create(inv).Error
+}
+
+// FindByVariantID retrieves vendor inventory by variant ID
+func (r *VendorInventoryRepository) FindByVariantID(ctx context.Context, variantID, merchantID string) (*models.VendorInventory, error) {
+	var inv models.VendorInventory
+	return &inv, r.db.WithContext(ctx).
+		Where("variant_id = ? AND merchant_id = ?", variantID, merchantID).First(&inv).Error
+}
+
+// FindByProductID (for simple products without variants)
+func (r *VendorInventoryRepository) FindByProductID(ctx context.Context, productID string, merchantID string) (*models.VendorInventory, error) {
+	var inv models.VendorInventory
+	err := r.db.WithContext(ctx).
+		Where("product_id = ? AND merchant_id = ?", productID, merchantID).
+		First(&inv).Error
+	return &inv, err
+}
+
+// UpdateStock adjusts quantity (can be negative for reservations)
+func (r *VendorInventoryRepository) UpdateStock(ctx context.Context, invID uint, delta int) error {
+	return r.db.WithContext(ctx).
+		Model(&models.VendorInventory{}).
+		Where("id = ?", invID).
+		Update("quantity", gorm.Expr("quantity + ?", delta)).
+		Error
+}
+
+// ReserveStock increments reserved quantity
+func (r *VendorInventoryRepository) ReserveStock(ctx context.Context, invID uint, qty int) error {
+	return r.db.WithContext(ctx).
+		Model(&models.VendorInventory{}).
+		Where("id = ?", invID).
+		Update("reserved_quantity", gorm.Expr("reserved_quantity + ?", qty)).
+		Error
+}
+
+// ReleaseStock decrements reserved quantity
+func (r *VendorInventoryRepository) ReleaseStock(ctx context.Context, invID uint, qty int) error {
+	return r.db.WithContext(ctx).
+		Model(&models.VendorInventory{}).
+		Where("id = ?", invID).
+		Update("reserved_quantity", gorm.Expr("reserved_quantity - ?", qty)).
+		Error
+}
+
+// Delete removes a vendor inventory record by ID
+func (r *VendorInventoryRepository) Delete(ctx context.Context, id uint) error {
+	return r.db.WithContext(ctx).Delete(&models.VendorInventory{}, id).Error
+}
+
+// UpdateInventoryQuantity updates Quantity (can be negative)
+
+func (r *VendorInventoryRepository) UpdateInventoryQuantity(ctx context.Context, inventoryID string, delta int) error {
+	return r.db.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
+		var inv models.VendorInventory
+		if err := tx.First(&inv, "id = ?", inventoryID).Error; err != nil {
+			return err
+		}
+		newQ := inv.Quantity + delta
+		if newQ < 0 && !inv.BackorderAllowed {
+			return errors.New("insufficient stock and backorders not allowed")
+		}
+		inv.Quantity = newQ
+		return tx.Save(&inv).Error
+	})
+}

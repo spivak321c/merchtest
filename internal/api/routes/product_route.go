@@ -9,7 +9,7 @@ import (
 	"github.com/gin-gonic/gin"
 	// "github.com/go-playground/validator/v10"
 	// "github.com/shopspring/decimal"
-	 "go.uber.org/zap"
+	"go.uber.org/zap"
 	//"gorm.io/gorm"
 )
 
@@ -23,9 +23,6 @@ func RegisterProductRoutes(r *gin.Engine) {
 
 	// Initialize validator
 	//validator := validator.New()
-	
-
-
 
 	// Initialize repository
 	repo := repositories.NewProductRepository()
@@ -47,7 +44,6 @@ func RegisterProductRoutes(r *gin.Engine) {
 		productGroup.GET("/:id", ProductHandler.GetProductByID)
 		productGroup.GET("/merchant/:id", ProductHandler.ListProductsByMerchant)
 		productGroup.PUT("/products/inventory", ProductHandler.UpdateInventory)
-
 
 	}
 }

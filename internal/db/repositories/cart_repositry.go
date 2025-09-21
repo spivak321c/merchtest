@@ -23,6 +23,7 @@ func NewCartRepository() *CartRepository {
 func (r *CartRepository) Create(ctx context.Context, cart *models.Cart) error {
 	return r.db.WithContext(ctx).Create(cart).Error
 }
+
 // FindByID retrieves a cart by ID with associated User and CartItems
 // func (r *CartRepository) FindByID(id uint) (*models.Cart, error) {
 // 	var cart models.Cart
@@ -50,7 +51,6 @@ func (r *CartRepository) FindByID(ctx context.Context, id uint) (*models.Cart, e
 // 	return &cart, err
 // }
 
-
 func (r *CartRepository) FindActiveCart(ctx context.Context, userID uint) (*models.Cart, error) {
 	var cart models.Cart
 	err := r.db.WithContext(ctx).
@@ -58,17 +58,16 @@ func (r *CartRepository) FindActiveCart(ctx context.Context, userID uint) (*mode
 		Where("user_id = ? AND status = ?", userID, models.CartStatusActive).
 		Order("created_at DESC").First(&cart).Error
 	if errors.Is(err, gorm.ErrRecordNotFound) {
-		return nil, ErrCartNotFound
+		return nil, gorm.ErrRecordNotFound //ErrCartNotFound
 	}
 	return &cart, err
 }
 
-
 // FindByUserIDAndStatus retrieves carts for a user by status
-func (r *CartRepository) FindByUserIDAndStatus(ctx context.Context , userID uint, status models.CartStatus) ([]models.Cart, error) {
+func (r *CartRepository) FindByUserIDAndStatus(ctx context.Context, userID uint, status models.CartStatus) ([]models.Cart, error) {
 	var carts []models.Cart
 	err := r.db.WithContext(ctx).
-	Preload("CartItems.Product.Merchant").Where("user_id = ? AND status = ?", userID, status).Find(&carts).Error
+		Preload("CartItems.Product.Merchant").Where("user_id = ? AND status = ?", userID, status).Find(&carts).Error
 	return carts, err
 }
 

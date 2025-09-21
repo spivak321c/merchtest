@@ -136,13 +136,6 @@ func (s *ProductService) DeleteProduct(id uint, merchantID uint) error {
 }
 */
 
-
-
-
-
-
-
-
 /*
 
 import (

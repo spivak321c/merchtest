@@ -20,11 +20,11 @@ import (
 )
 
 var (
-	ErrInvalidProduct     = errors.New("invalid product data")
-	ErrInvalidSKU         = errors.New("invalid SKU format")
-	ErrInvalidMediaURL    = errors.New("invalid media URL")
-	ErrInvalidAttributes  = errors.New("invalid variant attributes")
-	ErrUnauthorized       = errors.New("unauthorized operation")
+	ErrInvalidProduct    = errors.New("invalid product data")
+	ErrInvalidSKU        = errors.New("invalid SKU format")
+	ErrInvalidMediaURL   = errors.New("invalid media URL")
+	ErrInvalidAttributes = errors.New("invalid variant attributes")
+	ErrUnauthorized      = errors.New("unauthorized operation")
 )
 
 // SKU validation regex: alphanumeric, hyphens, underscores, max 100 chars
@@ -46,7 +46,7 @@ func NewProductService(productRepo *repositories.ProductRepository, logger *zap.
 
 // CreateProductWithVariants creates a product from input DTO
 func (s *ProductService) CreateProductWithVariants(ctx context.Context, input *dto.ProductInput) (*dto.ProductResponse, error) {
-	logger := s.logger.With(zap.String("operation", "CreateProductWithVariants"), )
+	logger := s.logger.With(zap.String("operation", "CreateProductWithVariants"))
 
 	// Validate input
 	if err := s.validator.Struct(input); err != nil {
@@ -92,7 +92,7 @@ func (s *ProductService) CreateProductWithVariants(ctx context.Context, input *d
 	// Map DTO to models
 	product := &models.Product{
 		Name:        strings.TrimSpace(input.Name),
-		MerchantID: strings.TrimSpace(input.MerchantID),
+		MerchantID:  strings.TrimSpace(input.MerchantID),
 		Description: strings.TrimSpace(input.Description),
 		SKU:         strings.TrimSpace(input.SKU),
 		BasePrice:   decimal.NewFromFloat(input.BasePrice),
@@ -101,10 +101,10 @@ func (s *ProductService) CreateProductWithVariants(ctx context.Context, input *d
 	variants := make([]models.Variant, len(input.Variants))
 	for i, v := range input.Variants {
 		variants[i] = models.Variant{
-			SKU:            strings.TrimSpace(v.SKU),
+			SKU:             strings.TrimSpace(v.SKU),
 			PriceAdjustment: decimal.NewFromFloat(v.PriceAdjustment),
-			Attributes:     v.Attributes,
-			IsActive:       true,
+			Attributes:      v.Attributes,
+			IsActive:        true,
 		}
 	}
 	media := make([]models.Media, len(input.Media))
@@ -116,7 +116,7 @@ func (s *ProductService) CreateProductWithVariants(ctx context.Context, input *d
 	}
 
 	// Delegate to repo
-	err := s.productRepo.CreateProductWithVariantsAndInventory(ctx,product, variants, input.Variants, media, nil, isSimple)
+	err := s.productRepo.CreateProductWithVariantsAndInventory(ctx, product, variants, input.Variants, media, nil, isSimple)
 	if err != nil {
 		if errors.Is(err, repositories.ErrDuplicateSKU) {
 			return nil, fmt.Errorf("duplicate SKU: %w", err)
@@ -144,21 +144,21 @@ func (s *ProductService) CreateProductWithVariants(ctx context.Context, input *d
 	}
 	for i, v := range product.Variants {
 		response.Variants[i] = dto.VariantResponse{
-			ID:             v.ID,
-			ProductID:      v.ProductID,
-			SKU:            v.SKU,
+			ID:              v.ID,
+			ProductID:       v.ProductID,
+			SKU:             v.SKU,
 			PriceAdjustment: v.PriceAdjustment.InexactFloat64(),
-			TotalPrice:     v.TotalPrice.InexactFloat64(),
-			Attributes:     v.Attributes,
-			IsActive:       v.IsActive,
-			CreatedAt:      v.CreatedAt,
-			UpdatedAt:      v.UpdatedAt,
+			TotalPrice:      v.TotalPrice.InexactFloat64(),
+			Attributes:      v.Attributes,
+			IsActive:        v.IsActive,
+			CreatedAt:       v.CreatedAt,
+			UpdatedAt:       v.UpdatedAt,
 			Inventory: dto.InventoryResponse{
-				ID:               v.Inventory.ID,
-				Quantity:         v.Inventory.Quantity,
-				ReservedQuantity: v.Inventory.ReservedQuantity,
+				ID:                v.Inventory.ID,
+				Quantity:          v.Inventory.Quantity,
+				ReservedQuantity:  v.Inventory.ReservedQuantity,
 				LowStockThreshold: v.Inventory.LowStockThreshold,
-				BackorderAllowed: v.Inventory.BackorderAllowed,
+				BackorderAllowed:  v.Inventory.BackorderAllowed,
 			},
 		}
 	}
@@ -209,21 +209,21 @@ func (s *ProductService) GetProductByID(ctx context.Context, id string, preloads
 	}
 	for i, v := range product.Variants {
 		response.Variants[i] = dto.VariantResponse{
-			ID:             v.ID,
-			ProductID:      v.ProductID,
-			SKU:            v.SKU,
+			ID:              v.ID,
+			ProductID:       v.ProductID,
+			SKU:             v.SKU,
 			PriceAdjustment: (v.PriceAdjustment).InexactFloat64(),
-			TotalPrice:     (v.TotalPrice).InexactFloat64(),
-			Attributes:     v.Attributes,
-			IsActive:       v.IsActive,
-			CreatedAt:      v.CreatedAt,
-			UpdatedAt:      v.UpdatedAt,
+			TotalPrice:      (v.TotalPrice).InexactFloat64(),
+			Attributes:      v.Attributes,
+			IsActive:        v.IsActive,
+			CreatedAt:       v.CreatedAt,
+			UpdatedAt:       v.UpdatedAt,
 			Inventory: dto.InventoryResponse{
-				ID:               v.Inventory.ID,
-				Quantity:         v.Inventory.Quantity,
-				ReservedQuantity: v.Inventory.ReservedQuantity,
+				ID:                v.Inventory.ID,
+				Quantity:          v.Inventory.Quantity,
+				ReservedQuantity:  v.Inventory.ReservedQuantity,
 				LowStockThreshold: v.Inventory.LowStockThreshold,
-				BackorderAllowed: v.Inventory.BackorderAllowed,
+				BackorderAllowed:  v.Inventory.BackorderAllowed,
 			},
 		}
 	}
@@ -239,11 +239,11 @@ func (s *ProductService) GetProductByID(ctx context.Context, id string, preloads
 	}
 	if product.SimpleInventory != nil {
 		response.SimpleInventory = &dto.InventoryResponse{
-			ID:               product.SimpleInventory.ID,
-			Quantity:         product.SimpleInventory.Quantity,
-			ReservedQuantity: product.SimpleInventory.ReservedQuantity,
+			ID:                product.SimpleInventory.ID,
+			Quantity:          product.SimpleInventory.Quantity,
+			ReservedQuantity:  product.SimpleInventory.ReservedQuantity,
 			LowStockThreshold: product.SimpleInventory.LowStockThreshold,
-			BackorderAllowed: product.SimpleInventory.BackorderAllowed,
+			BackorderAllowed:  product.SimpleInventory.BackorderAllowed,
 		}
 	}
 
@@ -277,21 +277,21 @@ func (s *ProductService) ListProductsByMerchant(ctx context.Context, merchantID 
 		}
 		for j, v := range p.Variants {
 			responses[i].Variants[j] = dto.VariantResponse{
-				ID:             v.ID,
-				ProductID:      v.ProductID,
-				SKU:            v.SKU,
+				ID:              v.ID,
+				ProductID:       v.ProductID,
+				SKU:             v.SKU,
 				PriceAdjustment: (v.PriceAdjustment).InexactFloat64(),
-				TotalPrice:     (v.TotalPrice).InexactFloat64(),
-				Attributes:     v.Attributes,
-				IsActive:       v.IsActive,
-				CreatedAt:      v.CreatedAt,
-				UpdatedAt:      v.UpdatedAt,
+				TotalPrice:      (v.TotalPrice).InexactFloat64(),
+				Attributes:      v.Attributes,
+				IsActive:        v.IsActive,
+				CreatedAt:       v.CreatedAt,
+				UpdatedAt:       v.UpdatedAt,
 				Inventory: dto.InventoryResponse{
-					ID:               v.Inventory.ID,
-					Quantity:         v.Inventory.Quantity,
-					ReservedQuantity: v.Inventory.ReservedQuantity,
+					ID:                v.Inventory.ID,
+					Quantity:          v.Inventory.Quantity,
+					ReservedQuantity:  v.Inventory.ReservedQuantity,
 					LowStockThreshold: v.Inventory.LowStockThreshold,
-					BackorderAllowed: v.Inventory.BackorderAllowed,
+					BackorderAllowed:  v.Inventory.BackorderAllowed,
 				},
 			}
 		}
@@ -307,11 +307,11 @@ func (s *ProductService) ListProductsByMerchant(ctx context.Context, merchantID 
 		}
 		if p.SimpleInventory != nil {
 			responses[i].SimpleInventory = &dto.InventoryResponse{
-				ID:               p.SimpleInventory.ID,
-				Quantity:         p.SimpleInventory.Quantity,
-				ReservedQuantity: p.SimpleInventory.ReservedQuantity,
+				ID:                p.SimpleInventory.ID,
+				Quantity:          p.SimpleInventory.Quantity,
+				ReservedQuantity:  p.SimpleInventory.ReservedQuantity,
 				LowStockThreshold: p.SimpleInventory.LowStockThreshold,
-				BackorderAllowed: p.SimpleInventory.BackorderAllowed,
+				BackorderAllowed:  p.SimpleInventory.BackorderAllowed,
 			}
 		}
 	}
@@ -353,21 +353,21 @@ func (s *ProductService) GetAllProducts(ctx context.Context, limit, offset int, 
 		}
 		for j, v := range p.Variants {
 			responses[i].Variants[j] = dto.VariantResponse{
-				ID:             v.ID,
-				ProductID:      v.ProductID,
-				SKU:            v.SKU,
+				ID:              v.ID,
+				ProductID:       v.ProductID,
+				SKU:             v.SKU,
 				PriceAdjustment: (v.PriceAdjustment).InexactFloat64(),
-				TotalPrice:     (v.TotalPrice).InexactFloat64(),
-				Attributes:     v.Attributes,
-				IsActive:       v.IsActive,
-				CreatedAt:      v.CreatedAt,
-				UpdatedAt:      v.UpdatedAt,
+				TotalPrice:      (v.TotalPrice).InexactFloat64(),
+				Attributes:      v.Attributes,
+				IsActive:        v.IsActive,
+				CreatedAt:       v.CreatedAt,
+				UpdatedAt:       v.UpdatedAt,
 				Inventory: dto.InventoryResponse{
-					ID:               v.Inventory.ID,
-					Quantity:         v.Inventory.Quantity,
-					ReservedQuantity: v.Inventory.ReservedQuantity,
+					ID:                v.Inventory.ID,
+					Quantity:          v.Inventory.Quantity,
+					ReservedQuantity:  v.Inventory.ReservedQuantity,
 					LowStockThreshold: v.Inventory.LowStockThreshold,
-					BackorderAllowed: v.Inventory.BackorderAllowed,
+					BackorderAllowed:  v.Inventory.BackorderAllowed,
 				},
 			}
 		}
@@ -383,11 +383,11 @@ func (s *ProductService) GetAllProducts(ctx context.Context, limit, offset int, 
 		}
 		if p.SimpleInventory != nil {
 			responses[i].SimpleInventory = &dto.InventoryResponse{
-				ID:               p.SimpleInventory.ID,
-				Quantity:         p.SimpleInventory.Quantity,
-				ReservedQuantity: p.SimpleInventory.ReservedQuantity,
+				ID:                p.SimpleInventory.ID,
+				Quantity:          p.SimpleInventory.Quantity,
+				ReservedQuantity:  p.SimpleInventory.ReservedQuantity,
 				LowStockThreshold: p.SimpleInventory.LowStockThreshold,
-				BackorderAllowed: p.SimpleInventory.BackorderAllowed,
+				BackorderAllowed:  p.SimpleInventory.BackorderAllowed,
 			}
 		}
 	}

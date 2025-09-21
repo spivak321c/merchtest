@@ -142,7 +142,6 @@ func (h *MerchantHandlers) GetPayouts(c *gin.Context) {
 }
 */
 
-
 /*
 type MerchantHandlers struct {
 	productService *product.ProductService
@@ -452,7 +451,6 @@ func (h *MerchantHandlers) UpdateOrderItemStatus(c *gin.Context) {
      c.JSON(http.StatusOK, gin.H{"message": "products uploaded"})
  }
 */
-
 
 /*
 func (h *MerchantHandler) BulkUploadProducts(c *gin.Context) {

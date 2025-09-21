@@ -1,4 +1,5 @@
 package handlers
+
 /*
 import (
 	"net/http"
@@ -174,7 +175,7 @@ func (h *CustomerHandlers) RemoveCartItem(c *gin.Context) {
 		c.JSON(http.StatusForbidden, gin.H{"error": "cart item does not belong to user"})
 		return
 	}
-	
+
 
 	updatedCart, err := h.cartService.RemoveCartItem(uint(cartItemID))
 	if err != nil {

@@ -78,7 +78,7 @@ func (h *CartHandlers) UpdateCartItemQuantity(c *gin.Context) {
 		return
 	}
 
-	var req dto.UpdateItemRequest 
+	var req dto.UpdateItemRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -125,7 +125,7 @@ func (h *CartHandlers) RemoveCartItem(c *gin.Context) {
 	 	c.JSON(http.StatusForbidden, gin.H{"error": "cart item does not belong to user"})
 	 	return
 	 }
-	
+
 
 	updatedCart, err := h.cartService.RemoveCartItem(uint(cartItemID))
 	if err != nil {

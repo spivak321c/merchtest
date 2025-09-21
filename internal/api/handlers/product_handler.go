@@ -5,11 +5,11 @@ import (
 	"net/http"
 	"strconv"
 
+	"api-customer-merchant/internal/api/dto" // Assuming this exists for VariantInput
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
 	"go.uber.org/zap"
-	"api-customer-merchant/internal/api/dto" // Assuming this exists for VariantInput
-	
+
 	"api-customer-merchant/internal/services/product"
 )
 
@@ -154,8 +154,8 @@ func (h *ProductHandler) ListProductsByMerchant(c *gin.Context) {
 	logger := h.logger.With(zap.String("operation", "ListProductsByMerchant"))
 
 	// Check merchant authorization
-	merchantID:= c.Param("id")
-	if merchantID=="" {
+	merchantID := c.Param("id")
+	if merchantID == "" {
 		logger.Warn("Unauthorized access attempt")
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "unauthorized"})
 		return
