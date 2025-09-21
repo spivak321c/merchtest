@@ -243,7 +243,7 @@ func (s *OrderService) CreateOrder(ctx context.Context, userID uint) (*dto.Order
 			// For now, we assume cart reservation handled this.
 			// We'll just update the main inventory.
 			// This logic might need to be more robust depending on inventory strategy.
-			if err := tx.Model(&models.VendorInventory{}).
+			if err := tx.Model(&models.Inventory{}).
 				Where("product_id = ?", item.ProductID).
 				Updates(map[string]interface{}{
 					"quantity":          gorm.Expr("quantity - ?", item.Quantity),

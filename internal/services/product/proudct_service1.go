@@ -1,34 +1,31 @@
 package product
-/*
+
 import (
 	"context"
 	"errors"
 	"fmt"
-
-	//"net/url"
-	"regexp"
+	//"regexp"
 	"strings"
-
-	//"github.com/shopspring/decimal"
-	"api-customer-merchant/internal/api/dto" // Assuming this exists for VariantInput
-	"api-customer-merchant/internal/db/models"
-	"api-customer-merchant/internal/db/repositories"
 
 	"github.com/go-playground/validator/v10"
 	"github.com/shopspring/decimal"
 	"go.uber.org/zap"
+
+	"api-customer-merchant/internal/api/dto"
+	"api-customer-merchant/internal/db/models"
+	"api-customer-merchant/internal/db/repositories"
 )
 
 var (
 	ErrInvalidProduct    = errors.New("invalid product data")
-	ErrInvalidSKU        = errors.New("invalid SKU format")
+	//ErrInvalidSKU        = errors.New("invalid SKU format")
 	ErrInvalidMediaURL   = errors.New("invalid media URL")
 	ErrInvalidAttributes = errors.New("invalid variant attributes")
 	ErrUnauthorized      = errors.New("unauthorized operation")
 )
 
 // SKU validation regex: alphanumeric, hyphens, underscores, max 100 chars
-var skuRegex = regexp.MustCompile(`^[a-zA-Z0-9_-]{1,100}$`)
+//var skuRegex = regexp.MustCompile(`^[a-zA-Z0-9_-]{1,100}$`)
 
 type ProductService struct {
 	productRepo *repositories.ProductRepository
@@ -55,53 +52,31 @@ func (s *ProductService) CreateProductWithVariants(ctx context.Context, input *d
 	}
 
 	// Additional validation
-	if !skuRegex.MatchString(input.SKU) {
-		logger.Error("Invalid SKU format", zap.String("sku", input.SKU))
-		return nil, ErrInvalidSKU
-	}
+	// if !skuRegex.MatchString(input.SKU) {
+	// 	logger.Error("Invalid SKU format", zap.String("sku", input.SKU))
+	// 	return nil, ErrInvalidSKU
+	// }
+
 	isSimple := len(input.Variants) == 0
 	if isSimple && input.InitialStock == nil {
 		logger.Error("Initial stock required for simple product")
 		return nil, ErrInvalidProduct
 	}
-	for _, v := range input.Variants {
-		if !skuRegex.MatchString(v.SKU) {
-			logger.Error("Invalid variant SKU format", zap.String("sku", v.SKU))
-			return nil, ErrInvalidSKU
-		}
-	}
-
-	// Check SKU uniqueness
-	if _, err := s.productRepo.FindBySKU(input.SKU); err == nil {
-		logger.Warn("Duplicate product SKU", zap.String("sku", input.SKU))
-		return nil, fmt.Errorf("product SKU %s already exists", input.SKU)
-	} else if !errors.Is(err, repositories.ErrProductNotFound) {
-		logger.Error("Failed to check product SKU", zap.Error(err))
-		return nil, fmt.Errorf("failed to check SKU: %w", err)
-	}
-	for _, v := range input.Variants {
-		if _, err := s.productRepo.FindBySKU(v.SKU); err == nil {
-			logger.Warn("Duplicate variant SKU", zap.String("sku", v.SKU))
-			return nil, fmt.Errorf("variant SKU %s already exists", v.SKU)
-		} else if !errors.Is(err, repositories.ErrProductNotFound) {
-			logger.Error("Failed to check variant SKU", zap.Error(err))
-			return nil, fmt.Errorf("failed to check variant SKU: %w", err)
-		}
-	}
+	
 
 	// Map DTO to models
 	product := &models.Product{
 		Name:        strings.TrimSpace(input.Name),
 		MerchantID:  strings.TrimSpace(input.MerchantID),
 		Description: strings.TrimSpace(input.Description),
-		SKU:         strings.TrimSpace(input.SKU),
+		//SKU:         strings.TrimSpace(input.SKU),
 		BasePrice:   decimal.NewFromFloat(input.BasePrice),
 		CategoryID:  input.CategoryID,
 	}
 	variants := make([]models.Variant, len(input.Variants))
 	for i, v := range input.Variants {
 		variants[i] = models.Variant{
-			SKU:             strings.TrimSpace(v.SKU),
+			//SKU:             strings.TrimSpace(v.SKU),
 			PriceAdjustment: decimal.NewFromFloat(v.PriceAdjustment),
 			Attributes:      v.Attributes,
 			IsActive:        true,
@@ -113,6 +88,12 @@ func (s *ProductService) CreateProductWithVariants(ctx context.Context, input *d
 			URL:  strings.TrimSpace(m.URL),
 			Type: models.MediaType(m.Type),
 		}
+	}
+
+
+	product.GenerateSKU(input.MerchantID)
+	for i := range variants {
+		variants[i].GenerateSKU(product.SKU)
 	}
 
 	// Delegate to repo
@@ -134,7 +115,7 @@ func (s *ProductService) CreateProductWithVariants(ctx context.Context, input *d
 		MerchantID:  product.MerchantID,
 		Name:        product.Name,
 		Description: product.Description,
-		SKU:         product.SKU,
+		//SKU:         product.SKU,
 		BasePrice:   (product.BasePrice).InexactFloat64(),
 		CategoryID:  product.CategoryID,
 		CreatedAt:   product.CreatedAt,
@@ -146,7 +127,7 @@ func (s *ProductService) CreateProductWithVariants(ctx context.Context, input *d
 		response.Variants[i] = dto.VariantResponse{
 			ID:              v.ID,
 			ProductID:       v.ProductID,
-			SKU:             v.SKU,
+			//SKU:             v.SKU,
 			PriceAdjustment: v.PriceAdjustment.InexactFloat64(),
 			TotalPrice:      v.TotalPrice.InexactFloat64(),
 			Attributes:      v.Attributes,
@@ -185,7 +166,7 @@ func (s *ProductService) CreateProductWithVariants(ctx context.Context, input *d
 // GetProductByID fetches a product with optional preloads
 func (s *ProductService) GetProductByID(ctx context.Context, id string, preloads ...string) (*dto.ProductResponse, error) {
 	logger := s.logger.With(zap.String("operation", "GetProductByID"), zap.String("product_id", id))
-	product, err := s.productRepo.FindByID(id, preloads...)
+	product, err := s.productRepo.FindByID(ctx, id, preloads...)  // Fixed: Added ctx
 	if err != nil {
 		if errors.Is(err, repositories.ErrProductNotFound) {
 			return nil, err
@@ -254,7 +235,7 @@ func (s *ProductService) GetProductByID(ctx context.Context, id string, preloads
 // ListProductsByMerchant lists products for a merchant
 func (s *ProductService) ListProductsByMerchant(ctx context.Context, merchantID string, limit, offset int, activeOnly bool) ([]dto.ProductResponse, error) {
 	logger := s.logger.With(zap.String("operation", "ListProductsByMerchant"), zap.String("merchant_id", merchantID))
-	products, err := s.productRepo.ListByMerchant(merchantID, limit, offset, activeOnly)
+	products, err := s.productRepo.ListByMerchant(ctx, merchantID, limit, offset, activeOnly)  // Fixed: Added ctx
 	if err != nil {
 		logger.Error("Failed to list products", zap.Error(err))
 		return nil, fmt.Errorf("failed to list products: %w", err)
@@ -330,7 +311,7 @@ func (s *ProductService) GetAllProducts(ctx context.Context, limit, offset int, 
 		offset = 0
 	}
 
-	products, total, err := s.productRepo.GetAllProducts(limit, offset, categoryID, "Media", "Variants", "Variants.Inventory", "SimpleInventory")
+	products, total, err := s.productRepo.GetAllProducts(ctx, limit, offset, categoryID, "Media", "Variants", "Variants.Inventory", "SimpleInventory")  // Fixed: Added ctx (resolves type shifts)
 	if err != nil {
 		logger.Error("Failed to fetch all products", zap.Error(err))
 		return nil, 0, fmt.Errorf("failed to fetch products: %w", err)
@@ -419,4 +400,3 @@ func (s *ProductService) DeleteProduct(ctx context.Context, id string) error {
 	logger.Info("Product deleted successfully")
 	return nil
 }
-*/

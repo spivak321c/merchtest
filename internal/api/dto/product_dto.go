@@ -10,7 +10,7 @@ type ProductInput struct {
 	Name         string         `json:"name" validate:"required,max=255"`
 	MerchantID   string         `json:"merchant_id" validate:"required,max=255"`
 	Description  string         `json:"description" validate:"max=1000"`
-	SKU          string         `json:"sku" validate:"required,max=100"`
+	//SKU          string         `json:"sku" validate:"required,max=100"`
 	BasePrice    float64        `json:"base_price" validate:"required,gt=0"`
 	CategoryID   uint           `json:"category_id" validate:"required"`
 	InitialStock *int           `json:"initial_stock" validate:"omitempty,gte=0"` // For simple products

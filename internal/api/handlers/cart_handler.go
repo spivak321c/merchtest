@@ -12,6 +12,10 @@ import (
 	//"api-customer-merchant/internal/domain/payment"
 	"api-customer-merchant/internal/services/product"
 	//"strconv"
+
+
+
+
 	"github.com/gin-gonic/gin"
 )
 
@@ -142,35 +146,93 @@ package handlers
 import (
 	"net/http"
 	"strconv"
+	"strings"
 
+	"api-customer-merchant/internal/api/dto"
+	"api-customer-merchant/internal/utils"
 	"api-customer-merchant/internal/services/cart" // Assuming service import
 	"github.com/gin-gonic/gin"
+	"github.com/go-playground/validator/v10"
+	"go.uber.org/zap"
 )
+
+// type CartHandler struct {
+// 	cartService *cart.CartService
+// }
+
+// func NewCartHandler(cartService *cart.CartService) *CartHandler {
+// 	return &CartHandler{cartService: cartService}
+// }
+
 
 type CartHandler struct {
 	cartService *cart.CartService
+	logger      *zap.Logger
+	validate    *validator.Validate
 }
 
-func NewCartHandler(cartService *cart.CartService) *CartHandler {
-	return &CartHandler{cartService: cartService}
+func NewCartHandler(cartService *cart.CartService, logger *zap.Logger) *CartHandler {
+	return &CartHandler{
+		cartService: cartService,
+		logger:      logger,
+		validate:    validator.New(),
+	}
 }
+
+
 
 // AddToCart handles adding an item to the cart
+// func (h *CartHandler) AddToCart(c *gin.Context) {
+// 	ctx := c.Request.Context()
+// 	userIDStr := c.Query("user_id") // For testing, get from query/body
+// 	userID, _ := strconv.ParseUint(userIDStr, 10, 32)
+// 	productID := c.Query("product_id")
+// 	quantityStr := c.Query("quantity")
+// 	quantity, _ := strconv.ParseUint(quantityStr, 10, 32)
+
+// 	updatedCart, err := h.cartService.AddItemToCart(ctx, uint(userID), uint(quantity), productID)
+// 	if err != nil {
+// 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+// 		return
+// 	}
+// 	c.JSON(http.StatusOK, updatedCart)
+// }
+
+
+
+
+
 func (h *CartHandler) AddToCart(c *gin.Context) {
 	ctx := c.Request.Context()
-	userIDStr := c.Query("user_id") // For testing, get from query/body
-	userID, _ := strconv.ParseUint(userIDStr, 10, 32)
-	productID := c.Query("product_id")
-	quantityStr := c.Query("quantity")
-	quantity, _ := strconv.ParseUint(quantityStr, 10, 32)
+	userIDStr := c.Query("user_id") // For testing
+	userID, _ := strconv.ParseUint(userIDStr, 10, 32)  // Helper to parse, assume implemented
 
-	updatedCart, err := h.cartService.AddItemToCart(ctx, uint(userID), uint(quantity), productID)
+	var req dto.AddItemRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		h.logger.Error("Bind error", zap.Error(err))
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	if err := h.validate.Struct(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	updatedCart, err := h.cartService.AddItemToCart(ctx, uint(userID), req.Quantity, req.ProductID, req.VariantID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	c.JSON(http.StatusOK, updatedCart)
+
+	
+	 // Helper to map model to DTO, assume implemented
+	 resp := &dto.CartResponse{}
+if err := utils.RespMap(updatedCart, resp); err != nil {
+  h.logger.Error(" error", zap.Error(err))
 }
+	c.JSON(http.StatusOK, resp)
+}
+
 
 // GetCartItem handles getting a cart item
 func (h *CartHandler) GetCartItem(c *gin.Context) {
@@ -201,19 +263,50 @@ func (h *CartHandler) GetCart(c *gin.Context) {
 }
 
 // UpdateCartItemQuantity handles updating quantity
+// func (h *CartHandler) UpdateCartItemQuantity(c *gin.Context) {
+// 	ctx := c.Request.Context()
+// 	itemIDStr := c.Param("id")
+// 	itemID, _ := strconv.ParseUint(itemIDStr, 10, 32)
+// 	quantityStr := c.Query("quantity")
+// 	quantity, _ := strconv.Atoi(quantityStr)
+
+// 	updatedCart, err := h.cartService.UpdateCartItemQuantity(ctx, uint(itemID), quantity)
+// 	if err != nil {
+// 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+// 		return
+// 	}
+// 	c.JSON(http.StatusOK, updatedCart)
+// }
+
+
+
 func (h *CartHandler) UpdateCartItemQuantity(c *gin.Context) {
 	ctx := c.Request.Context()
-	itemIDStr := c.Param("id")
-	itemID, _ := strconv.ParseUint(itemIDStr, 10, 32)
-	quantityStr := c.Query("quantity")
-	quantity, _ := strconv.Atoi(quantityStr)
+	itemIDstr := strings.TrimSpace(c.Param("id"))
+	itemID, _ := strconv.ParseUint(itemIDstr, 10, 32)
 
-	updatedCart, err := h.cartService.UpdateCartItemQuantity(ctx, uint(itemID), quantity)
+	var req dto.UpdateItemRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	if err := h.validate.Struct(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	updatedCart, err := h.cartService.UpdateCartItemQuantity(ctx, uint(itemID), req.Quantity)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	c.JSON(http.StatusOK, updatedCart)
+
+	 resp := &dto.CartResponse{}
+if err := utils.RespMap(updatedCart, resp); err != nil {
+  h.logger.Error(" error", zap.Error(err))
+}
+	c.JSON(http.StatusOK, resp)
+
 }
 
 // RemoveCartItem handles removing an item

@@ -52,29 +52,29 @@ func (r *InventoryRepository) Delete(id uint) error {
  		Update("quantity", gorm.Expr("quantity + ?", delta)).Error
  }
 */
-type VendorInventoryRepository struct {
+type InventoryRepository struct {
 	db *gorm.DB
 }
 
-func NewVendorInventoryRepository() *VendorInventoryRepository {
-	return &VendorInventoryRepository{db: db.DB}
+func NewInventoryRepository() *InventoryRepository {
+	return &InventoryRepository{db: db.DB}
 }
 
 // Create adds a new vendor inventory record
-func (r *VendorInventoryRepository) Create(ctx context.Context, inv *models.VendorInventory) error {
+func (r *InventoryRepository) Create(ctx context.Context, inv *models.Inventory) error {
 	return r.db.WithContext(ctx).Create(inv).Error
 }
 
 // FindByVariantID retrieves vendor inventory by variant ID
-func (r *VendorInventoryRepository) FindByVariantID(ctx context.Context, variantID, merchantID string) (*models.VendorInventory, error) {
-	var inv models.VendorInventory
+func (r *InventoryRepository) FindByVariantID(ctx context.Context, variantID, merchantID string) (*models.Inventory, error) {
+	var inv models.Inventory
 	return &inv, r.db.WithContext(ctx).
 		Where("variant_id = ? AND merchant_id = ?", variantID, merchantID).First(&inv).Error
 }
 
 // FindByProductID (for simple products without variants)
-func (r *VendorInventoryRepository) FindByProductID(ctx context.Context, productID string, merchantID string) (*models.VendorInventory, error) {
-	var inv models.VendorInventory
+func (r *InventoryRepository) FindByProductID(ctx context.Context, productID string, merchantID string) (*models.Inventory, error) {
+	var inv models.Inventory
 	err := r.db.WithContext(ctx).
 		Where("product_id = ? AND merchant_id = ?", productID, merchantID).
 		First(&inv).Error
@@ -82,42 +82,42 @@ func (r *VendorInventoryRepository) FindByProductID(ctx context.Context, product
 }
 
 // UpdateStock adjusts quantity (can be negative for reservations)
-func (r *VendorInventoryRepository) UpdateStock(ctx context.Context, invID uint, delta int) error {
+func (r *InventoryRepository) UpdateStock(ctx context.Context, invID uint, delta int) error {
 	return r.db.WithContext(ctx).
-		Model(&models.VendorInventory{}).
+		Model(&models.Inventory{}).
 		Where("id = ?", invID).
 		Update("quantity", gorm.Expr("quantity + ?", delta)).
 		Error
 }
 
 // ReserveStock increments reserved quantity
-func (r *VendorInventoryRepository) ReserveStock(ctx context.Context, invID uint, qty int) error {
+func (r *InventoryRepository) ReserveStock(ctx context.Context, invID uint, qty int) error {
 	return r.db.WithContext(ctx).
-		Model(&models.VendorInventory{}).
+		Model(&models.Inventory{}).
 		Where("id = ?", invID).
 		Update("reserved_quantity", gorm.Expr("reserved_quantity + ?", qty)).
 		Error
 }
 
 // ReleaseStock decrements reserved quantity
-func (r *VendorInventoryRepository) ReleaseStock(ctx context.Context, invID uint, qty int) error {
+func (r *InventoryRepository) ReleaseStock(ctx context.Context, invID uint, qty int) error {
 	return r.db.WithContext(ctx).
-		Model(&models.VendorInventory{}).
+		Model(&models.Inventory{}).
 		Where("id = ?", invID).
 		Update("reserved_quantity", gorm.Expr("reserved_quantity - ?", qty)).
 		Error
 }
 
 // Delete removes a vendor inventory record by ID
-func (r *VendorInventoryRepository) Delete(ctx context.Context, id uint) error {
-	return r.db.WithContext(ctx).Delete(&models.VendorInventory{}, id).Error
+func (r *InventoryRepository) Delete(ctx context.Context, id uint) error {
+	return r.db.WithContext(ctx).Delete(&models.Inventory{}, id).Error
 }
 
 // UpdateInventoryQuantity updates Quantity (can be negative)
 
-func (r *VendorInventoryRepository) UpdateInventoryQuantity(ctx context.Context, inventoryID string, delta int) error {
+func (r *InventoryRepository) UpdateInventoryQuantity(ctx context.Context, inventoryID string, delta int) error {
 	return r.db.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
-		var inv models.VendorInventory
+		var inv models.Inventory
 		if err := tx.First(&inv, "id = ?", inventoryID).Error; err != nil {
 			return err
 		}

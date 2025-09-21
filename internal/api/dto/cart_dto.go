@@ -8,7 +8,7 @@ import (
 // AddItemRequest: For POST /cart/add (add new item or increment existing)
 type AddItemRequest struct {
 	UserID    uint    `json:"user_id,omitempty"`
-	ProductID uint    `json:"product_id" validate:"required"`
+	ProductID string    `json:"product_id" validate:"required"`
 	VariantID *string `json:"variant_id,omitempty" validate:"omitempty,uuid"`
 	Quantity  int     `json:"quantity" validate:"required,gt=0"`
 }
@@ -23,7 +23,7 @@ type UpdateItemRequest struct {
 type BulkUpdateRequest struct {
 	UserID uint
 	Items  []struct {
-		ProductID uint    `json:"product_id" validate:"required"`
+		ProductID string    `json:"product_id" validate:"required"`
 		VariantID *string `json:"variant_id,omitempty"`
 		Quantity  int     `json:"quantity" validate:"required,gt=0"`
 	} `json:"items" validate:"dive"`

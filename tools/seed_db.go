@@ -133,7 +133,7 @@ func main() {
 					"size":  "large",
 				},
 				IsActive: true,
-				Inventory: models.VendorInventory{
+				Inventory: models.Inventory{
 					Quantity:          100,
 					ReservedQuantity:  0,
 					LowStockThreshold: 10,
@@ -151,7 +151,7 @@ func main() {
 					"size":  "medium",
 				},
 				IsActive: true,
-				Inventory: models.VendorInventory{
+				Inventory: models.Inventory{
 					Quantity:          50,
 					ReservedQuantity:  0,
 					LowStockThreshold: 10,

@@ -17,12 +17,12 @@ func SetupCartRoutes(r *gin.Engine) {
 		panic("Failed to initialize logger: " + err.Error())
 	}
 	defer logger.Sync() // Ensure logger flushes logs
-	inventoryRepo := repositories.NewVendorInventoryRepository()
+	inventoryRepo := repositories.NewInventoryRepository()
 	cartitemRepo := repositories.NewCartItemRepository()
 	cartRepo := repositories.NewCartRepository()
 	productRepo := repositories.NewProductRepository()
 	cartService := cart.NewCartService(cartRepo, cartitemRepo, productRepo, inventoryRepo, logger)
-	cartHandlers := handlers.NewCartHandler(cartService)
+	cartHandlers := handlers.NewCartHandler(cartService,logger)
 	//protected := middleware.AuthMiddleware("user")
 	r.GET("/cart", cartHandlers.GetCart)
 	r.POST("/cart/items", cartHandlers.AddToCart)

@@ -3,6 +3,7 @@ package cart
 import (
 	//"api-customer-merchant/internal/db"
 	"api-customer-merchant/internal/api/dto" // Assuming dto.BulkUpdateRequest is defined here with ProductID string, Quantity int
+	"api-customer-merchant/internal/db"
 	"api-customer-merchant/internal/db/models"
 	"api-customer-merchant/internal/db/repositories"
 	"context"
@@ -10,6 +11,7 @@ import (
 	"fmt"
 
 	"github.com/go-playground/validator/v10"
+	"github.com/shopspring/decimal"
 	"go.uber.org/zap"
 	"gorm.io/gorm"
 )
@@ -20,18 +22,19 @@ var (
 	ErrProductNotFound   = errors.New("product not found")
 	ErrInventoryNotFound = errors.New("inventory not found")
 	ErrInsufficientStock = errors.New("insufficient stock")
+	ErrTransactionFailed   = errors.New("transaction failed")
 )
 
 type CartService struct {
 	cartRepo      *repositories.CartRepository
 	cartItemRepo  *repositories.CartItemRepository
 	productRepo   *repositories.ProductRepository
-	inventoryRepo *repositories.VendorInventoryRepository
+	inventoryRepo *repositories.InventoryRepository
 	logger        *zap.Logger
 	validator     *validator.Validate
 }
 
-func NewCartService(cartRepo *repositories.CartRepository, cartItemRepo *repositories.CartItemRepository, productRepo *repositories.ProductRepository, inventoryRepo *repositories.VendorInventoryRepository, logger *zap.Logger) *CartService {
+func NewCartService(cartRepo *repositories.CartRepository, cartItemRepo *repositories.CartItemRepository, productRepo *repositories.ProductRepository, inventoryRepo *repositories.InventoryRepository, logger *zap.Logger) *CartService {
 	return &CartService{
 		cartRepo:      cartRepo,
 		cartItemRepo:  cartItemRepo,
@@ -143,6 +146,8 @@ func (s *CartService) AddItemToCart(ctx context.Context, userID uint, quantity u
 }
 */
 
+
+/*
 func (s *CartService) AddItemToCart(ctx context.Context, userID uint, quantity uint, productID string) (*models.Cart, error) {
 	if userID == 0 {
 		return nil, ErrInvalidUserID
@@ -156,7 +161,7 @@ func (s *CartService) AddItemToCart(ctx context.Context, userID uint, quantity u
 		return nil, err
 	}
 
-	product, err := s.productRepo.FindByID(productID)
+	product, err := s.productRepo.FindByID(ctx,productID)
 	if err != nil {
 		return nil, err
 	}
@@ -204,6 +209,10 @@ func (s *CartService) AddItemToCart(ctx context.Context, userID uint, quantity u
 
 	return s.cartRepo.FindByID(ctx, cart.ID)
 }
+*/
+
+
+
 
 /*
 func (s *CartService) AddItemToCart(ctx context.Context, userID uint, quantity uint, productID string, variantID *string) (*models.Cart, error) {
@@ -321,6 +330,195 @@ func (s *CartService) AddItemToCart(ctx context.Context, userID uint, quantity u
 
 */
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+func (s *CartService) AddItemToCart(ctx context.Context, userID uint, quantity int, productID string, variantID *string) (*models.Cart, error) {
+	if userID == 0 {
+		return nil, ErrInvalidUserID
+	}
+	if quantity <= 0 {
+		return nil, ErrInvalidQuantity
+	}
+
+	cart, err := s.GetActiveCart(ctx, userID)
+	if err != nil {
+		s.logger.Error("Failed to get active cart", zap.Uint("user_id", userID), zap.Error(err))
+		return nil, err
+	}
+
+	// Fetch product with preloaded Variants.Inventory and SimpleInventory
+	product, err := s.productRepo.FindByID(ctx, productID, "Variants.Inventory", "SimpleInventory")
+	if err != nil {
+		s.logger.Error("Product not found", zap.String("product_id", productID), zap.Error(err))
+		return nil, ErrProductNotFound
+	}
+	if product.DeletedAt.Valid {
+		s.logger.Error("Product is soft-deleted", zap.String("product_id", productID))
+		return nil, ErrProductNotFound
+	}
+
+	// Determine inventory: focus on variants if they exist, else simple
+	var inventory *models.Inventory
+	var price decimal.Decimal = product.BasePrice
+	var varID string
+	if variantID != nil && len(product.Variants) > 0 {
+		varID = *variantID
+		for _, v := range product.Variants {
+			if v.ID == varID && v.IsActive {
+				inventory = &v.Inventory
+				price = price.Add(v.PriceAdjustment)
+				break
+			}
+		}
+	} else if variantID == nil && product.SimpleInventory != nil {
+		inventory = product.SimpleInventory
+	} else {
+		s.logger.Error("Inventory not found", zap.String("product_id", productID), zap.Stringp("variant_id", variantID))
+		return nil, ErrInventoryNotFound
+	}
+	if inventory == nil {
+		s.logger.Error("No valid inventory", zap.String("product_id", productID), zap.Stringp("variant_id", variantID))
+		return nil, ErrInventoryNotFound
+	}
+
+	// Check available stock
+	available := inventory.Quantity - inventory.ReservedQuantity
+	if available < quantity {
+		s.logger.Warn("Insufficient stock", zap.Int("available", available), zap.Int("requested", quantity))
+		return nil, ErrInsufficientStock
+	}
+
+	// Transaction: Update cart item and reserve inventory
+	err = db.DB.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
+		// Find existing cart item
+		existing, err := s.cartItemRepo.FindByProductIDAndCartID(ctx, productID, nil,cart.ID)
+		if err == nil {
+			// Update existing item
+			newQty := existing.Quantity + quantity
+			if newQty > available {
+				return ErrInsufficientStock
+			}
+			if err := s.cartItemRepo.UpdateQuantityWithReservation(ctx, existing.ID, newQty, inventory.ID); err != nil {
+				return fmt.Errorf("failed to update cart item: %w", err)
+			}
+			return nil
+		} else if !errors.Is(err, gorm.ErrRecordNotFound) {
+			return fmt.Errorf("failed to check existing cart item: %w", err)
+		}
+
+		// Create new cart item
+		cartItem := &models.CartItem{
+			CartID:    cart.ID,
+			ProductID: productID,
+			VariantID: &varID, // Assume VariantID is *string in model
+			Quantity:  quantity,
+		}
+		if err := s.cartItemRepo.Create(ctx, cartItem); err != nil {
+			return fmt.Errorf("failed to create cart item: %w", err)
+		}
+		inventory.ReservedQuantity += quantity // Manual update since method undefined
+		if err := tx.Save(inventory).Error; err != nil {
+			return fmt.Errorf("failed to reserve inventory: %w", err)
+		}
+		return nil
+	})
+	if err != nil {
+		s.logger.Error("Transaction failed", zap.Error(err))
+		return nil, fmt.Errorf("%w: %v", ErrTransactionFailed, err)
+	}
+
+	// Return updated cart
+	updatedCart, err := s.cartRepo.FindByID(ctx, cart.ID)
+	if err != nil {
+		s.logger.Error("Failed to fetch updated cart", zap.Uint("cart_id", cart.ID), zap.Error(err))
+		return nil, err
+	}
+	// Manual preload if FindByIDWithItems undefined
+	if err := db.DB.WithContext(ctx).Preload("Items").Find(updatedCart).Error; err != nil {
+		return nil, err
+	}
+	return updatedCart, nil
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // UpdateCartItemQuantity updates the quantity of a cart item
 func (s *CartService) UpdateCartItemQuantity(ctx context.Context, cartItemID uint, quantity int) (*models.Cart, error) {
 	if cartItemID == 0 {
@@ -340,7 +538,7 @@ func (s *CartService) UpdateCartItemQuantity(ctx context.Context, cartItemID uin
 	merchantID := cartItem.MerchantID
 	if merchantID == "" {
 		// fallback: fetch product to get merchant (shouldn't usually happen if cart items store merchant)
-		prod, perr := s.productRepo.FindByID(cartItem.ProductID)
+		prod, perr := s.productRepo.FindByID(ctx,cartItem.ProductID)
 		if perr != nil {
 			return nil, ErrInventoryNotFound
 		}
@@ -380,7 +578,7 @@ func (s *CartService) RemoveCartItem(ctx context.Context, cartItemID uint) (*mod
 	merchantID := cartItem.MerchantID
 	if merchantID == "" {
 		// fallback: fetch product to get merchant
-		prod, perr := s.productRepo.FindByID(cartItem.ProductID)
+		prod, perr := s.productRepo.FindByID(ctx,cartItem.ProductID)
 		if perr != nil {
 			return nil, ErrInventoryNotFound
 		}
@@ -441,25 +639,81 @@ func (s *CartService) ClearCart(ctx context.Context, userID uint) error {
 // 	return s.GetCart(ctx, userID)
 // }
 
+
+
+
+
+
+
+
+
+
+
+
+// func (s *CartService) BulkAddItems(ctx context.Context, userID uint, items dto.BulkUpdateRequest) (*models.Cart, error) {
+// 	if userID == 0 {
+// 		return nil, ErrInvalidUserID
+// 	}
+// 	if err := s.validator.Struct(&items); err != nil {
+// 		return nil, fmt.Errorf("validation failed: %w", err)
+// 	}
+
+// 	// cart, err := s.GetActiveCart(ctx, userID)
+// 	// if err != nil {
+// 	// 	return nil, err
+// 	// }
+
+// 	for _, item := range items.Items {
+// 		// Convert uint ProductID to string for consistency
+// 		productID := fmt.Sprint(item.ProductID)
+// 		if _, err := s.AddItemToCart(ctx, userID, uint(item.Quantity), productID); err != nil {
+// 			return nil, fmt.Errorf("failed to add item %s: %w", productID, err)
+// 		}
+// 	}
+// 	return s.GetCart(ctx, userID)
+// }
+
+
+
+
+
+
 func (s *CartService) BulkAddItems(ctx context.Context, userID uint, items dto.BulkUpdateRequest) (*models.Cart, error) {
 	if userID == 0 {
 		return nil, ErrInvalidUserID
 	}
+	if len(items.Items) == 0 {
+		return nil, errors.New("no items provided")
+	}
 	if err := s.validator.Struct(&items); err != nil {
+		s.logger.Error("Validation failed", zap.Uint("user_id", userID), zap.Error(err))
 		return nil, fmt.Errorf("validation failed: %w", err)
 	}
 
-	// cart, err := s.GetActiveCart(ctx, userID)
-	// if err != nil {
-	// 	return nil, err
-	// }
-
-	for _, item := range items.Items {
-		// Convert uint ProductID to string for consistency
-		productID := fmt.Sprint(item.ProductID)
-		if _, err := s.AddItemToCart(ctx, userID, uint(item.Quantity), productID); err != nil {
-			return nil, fmt.Errorf("failed to add item %s: %w", productID, err)
-		}
+	cart, err := s.GetActiveCart(ctx, userID)
+	if err != nil {
+		s.logger.Error("Failed to get active cart", zap.Uint("user_id", userID), zap.Error(err))
+		return nil, err
 	}
-	return s.GetCart(ctx, userID)
+
+	err = db.DB.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
+		for i, item := range items.Items {
+			if _, err := s.AddItemToCart(ctx, userID, item.Quantity, item.ProductID, item.VariantID); err != nil {
+				s.logger.Error("Failed to add item", zap.String("product_id", item.ProductID), zap.Stringp("variant_id", item.VariantID), zap.Error(err))
+				return fmt.Errorf("failed to add item %d (product %s): %w", i+1, item.ProductID, err)
+			}
+		}
+		return nil
+	})
+	if err != nil {
+		s.logger.Error("Transaction failed", zap.Uint("user_id", userID), zap.Error(err))
+		return nil, fmt.Errorf("%w: %v", ErrTransactionFailed, err)
+	}
+
+	updatedCart, err := s.cartRepo.FindByID(ctx, cart.ID)
+	if err != nil {
+		s.logger.Error("Failed to fetch updated cart", zap.Uint("cart_id", cart.ID), zap.Error(err))
+		return nil, err
+	}
+	return updatedCart, nil
 }

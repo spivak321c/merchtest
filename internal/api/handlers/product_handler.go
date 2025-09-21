@@ -66,8 +66,7 @@ func (h *ProductHandler) CreateProduct(c *gin.Context) {
 	response, err := h.productService.CreateProductWithVariants(c.Request.Context(), &input)
 	if err != nil {
 		logger.Error("Failed to create product", zap.Error(err))
-		if errors.Is(err, product.ErrInvalidProduct) || errors.Is(err, product.ErrInvalidSKU) ||
-			errors.Is(err, product.ErrInvalidMediaURL) || errors.Is(err, product.ErrInvalidAttributes) ||
+		if errors.Is(err, product.ErrInvalidProduct) || errors.Is(err, product.ErrInvalidMediaURL) || errors.Is(err, product.ErrInvalidAttributes) ||
 			errors.Is(err, product.ErrInvalidProduct) {
 			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 			return

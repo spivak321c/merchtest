@@ -213,13 +213,13 @@ func (r *CartItemRepository) UpdateQuantityWithReservation(ctx context.Context, 
 		delta := newQuantity - item.Quantity
 		if delta > 0 {
 			// Reserve extra stock
-			if err := tx.Model(&models.VendorInventory{}).Where("id = ?", vendorInvID).
+			if err := tx.Model(&models.Inventory{}).Where("id = ?", vendorInvID).
 				Update("reserved_quantity", gorm.Expr("reserved_quantity + ?", delta)).Error; err != nil {
 				return fmt.Errorf("stock reservation failed: %w", err)
 			}
 		} else if delta < 0 {
 			// Unreserve stock
-			if err := tx.Model(&models.VendorInventory{}).Where("id = ?", vendorInvID).
+			if err := tx.Model(&models.Inventory{}).Where("id = ?", vendorInvID).
 				Update("reserved_quantity", gorm.Expr("reserved_quantity - ?", -delta)).Error; err != nil {
 				return fmt.Errorf("stock unreservation failed: %w", err)
 			}
@@ -255,7 +255,7 @@ func (r *CartItemRepository) DeleteWithUnreserve(ctx context.Context, id uint, v
 			return ErrCartItemNotFound
 		}
 		// Release reserved stock
-		if err := tx.Model(&models.VendorInventory{}).Where("id = ?", vendorInvID).
+		if err := tx.Model(&models.Inventory{}).Where("id = ?", vendorInvID).
 			Update("reserved_quantity", gorm.Expr("reserved_quantity - ?", item.Quantity)).Error; err != nil {
 			return fmt.Errorf("stock unreservation failed: %w", err)
 		}
