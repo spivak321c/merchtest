@@ -119,10 +119,11 @@ type Variant struct {
 	SKU             string          `gorm:"size:100;unique;not null;index" json:"sku"`
 	PriceAdjustment decimal.Decimal `gorm:"type:decimal(10,2);not null;default:0.00" json:"price_adjustment"`
 	TotalPrice      decimal.Decimal `gorm:"type:decimal(10,2);not null" json:"total_price"` // Computed: BasePrice + PriceAdjustment
-	Attributes      map[string]string `gorm:"type:jsonb;default:'{}'" json:"attributes"` // Use map for simplicity; can change to custom AttributesMap if needed
+	Attributes      AttributesMap `gorm:"type:jsonb;default:'{}'" json:"attributes"` // Use map for simplicity; can change to custom AttributesMap if needed
 	IsActive        bool            `gorm:"default:true" json:"is_active"`
 	CreatedAt       time.Time       `json:"created_at"`
 	UpdatedAt       time.Time       `json:"updated_at"`
+	DeletedAt   gorm.DeletedAt  `gorm:"index" json:"deleted_at,omitempty"` // Soft deletes for recovery
 
 	Product   Product   `gorm:"foreignKey:ProductID;constraint:OnDelete:CASCADE"` // Belongs to Product, cascade from parent
 	Inventory Inventory `gorm:"foreignKey:VariantID;constraint:OnDelete:CASCADE"` // Has one Inventory, cascade delete

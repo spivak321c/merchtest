@@ -97,7 +97,11 @@ func (s *ProductService) CreateProductWithVariants(ctx context.Context, input *d
 	}
 
 	// Delegate to repo
-	err := s.productRepo.CreateProductWithVariantsAndInventory(ctx, product, variants, input.Variants, media, nil, isSimple)
+	var simpleStock *int
+if isSimple {
+    simpleStock = input.InitialStock
+}
+	err := s.productRepo.CreateProductWithVariantsAndInventory(ctx, product, variants, input.Variants, media, simpleStock, isSimple)
 	if err != nil {
 		if errors.Is(err, repositories.ErrDuplicateSKU) {
 			return nil, fmt.Errorf("duplicate SKU: %w", err)
@@ -157,7 +161,16 @@ func (s *ProductService) CreateProductWithVariants(ctx context.Context, input *d
 	}
 
 	// SimpleInventory is always nil for simple products
-	response.SimpleInventory = nil
+	//response.SimpleInventory = nil
+	if product.SimpleInventory != nil {
+    response.SimpleInventory = &dto.InventoryResponse{
+        ID:                product.SimpleInventory.ID,
+        Quantity:          product.SimpleInventory.Quantity,
+        ReservedQuantity:  product.SimpleInventory.ReservedQuantity,
+        LowStockThreshold: product.SimpleInventory.LowStockThreshold,
+        BackorderAllowed:  product.SimpleInventory.BackorderAllowed,
+    }
+}
 
 	logger.Info("Product created successfully", zap.String("product_id", product.ID))
 	return response, nil

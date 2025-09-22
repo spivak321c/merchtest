@@ -7,7 +7,7 @@ import (
 
 // AddItemRequest: For POST /cart/add (add new item or increment existing)
 type AddItemRequest struct {
-	UserID    uint    `json:"user_id,omitempty"`
+	//UserID    uint    `json:"user_id,omitempty"`
 	ProductID string    `json:"product_id" validate:"required"`
 	VariantID *string `json:"variant_id,omitempty" validate:"omitempty,uuid"`
 	Quantity  int     `json:"quantity" validate:"required,gt=0"`
@@ -31,7 +31,7 @@ type BulkUpdateRequest struct {
 
 // CartResponse: For all responses (shared output DTO)
 type CartResponse struct {
-	ID        string             `json:"id"`
+	ID        uint             `json:"id"`
 	UserID    uint               `json:"user_id,omitempty"`
 	Status    models.CartStatus  `json:"status"`
 	Items     []CartItemResponse `json:"items"`
@@ -41,7 +41,7 @@ type CartResponse struct {
 }
 
 type CartItemResponse struct {
-	ID         string            `json:"id"`
+	ID         uint            `json:"id"`
 	ProductID  string            `json:"product_id"`
 	VariantID  *string           `json:"variant_id,omitempty"`
 	Attributes map[string]string `json:"attributes,omitempty"`

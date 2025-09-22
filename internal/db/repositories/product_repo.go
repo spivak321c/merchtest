@@ -251,7 +251,7 @@ func (r *ProductRepository) GetAllProducts(ctx context.Context, limit, offset in
 func (r *ProductRepository) CreateProductWithVariantsAndInventory(ctx context.Context, product *models.Product, variants []models.Variant, variantInputs []dto.VariantInput, media []models.Media, simpleInitialStock *int, isSimple bool) error {
 	// Validate Merchant exists
 	var merchant models.Merchant
-	if err := r.db.WithContext(ctx).Where("id = ?", product.MerchantID).First(&merchant).Error; err != nil {
+	if err := r.db.WithContext(ctx).Where("merchant_id = ?", product.MerchantID).First(&merchant).Error; err != nil {
 		return ErrMerchantNotFound
 	}
 
@@ -302,7 +302,7 @@ return err  // Propagate unexpected errors
 				return errors.New("simpleInitialStock required for simple products")
 			}
 			inventory := models.Inventory{
-				ProductID:         product.ID,
+				ProductID:         &product.ID,
 				MerchantID:        product.MerchantID,
 				Quantity:          *simpleInitialStock,
 				ReservedQuantity:  0,
@@ -321,8 +321,8 @@ return err  // Propagate unexpected errors
 					return fmt.Errorf("failed to create variant: %w", err)
 				}
 				inventory := models.Inventory{
-					ProductID:         product.ID, // Explicit link to product (per requirement)
-					VariantID:         variants[i].ID,
+					//ProductID:         &product.ID, // Explicit link to product (per requirement)
+					VariantID:         &variants[i].ID,
 					MerchantID:        product.MerchantID,
 					Quantity:          variantInputs[i].InitialStock,
 					ReservedQuantity:  0,

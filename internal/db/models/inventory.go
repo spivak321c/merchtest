@@ -37,8 +37,8 @@ import (
 
 type Inventory struct {
 	ID                string    `gorm:"type:uuid;primaryKey;default:uuid_generate_v4()" json:"id"`
-	ProductID         string    `gorm:"type:uuid;index" json:"product_id,omitempty"` // Optional: For simple products
-	VariantID         string    `gorm:"type:uuid;index" json:"variant_id,omitempty"` // Optional: For variants
+	ProductID         *string    `gorm:"type:uuid;index" json:"product_id,omitempty"` // Optional: For simple products
+	VariantID         *string    `gorm:"type:uuid;index" json:"variant_id,omitempty"` // Optional: For variants
 	MerchantID        string    `gorm:"type:uuid;not null;index" json:"merchant_id"` // Required: Vendor-specific
 	Quantity          int       `gorm:"default:0;not null;check:quantity >= 0" json:"quantity"`
 	ReservedQuantity  int       `gorm:"default:0;not null;check:reserved_quantity >= 0" json:"reserved_quantity"`
@@ -57,7 +57,7 @@ func (vi *Inventory) BeforeCreate(tx *gorm.DB) error {
 	if vi.ID == "" {
 		vi.ID = uuid.New().String()
 	}
-	if (vi.VariantID != "" && vi.ProductID != "") || (vi.VariantID == "" && vi.ProductID == "") {
+	if (vi.VariantID != nil && vi.ProductID != nil) || (vi.VariantID == nil && vi.ProductID == nil) {
 		return errors.New("exactly one of VariantID or ProductID must be set")
 	}
 	return nil

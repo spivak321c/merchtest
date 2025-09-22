@@ -19,7 +19,7 @@ type ProductInput struct {
 }
 
 type VariantInput struct {
-	SKU             string            `json:"sku" validate:"required,max=100"`
+	//SKU             string            `json:"sku" validate:"required,max=100"`
 	PriceAdjustment float64           `json:"price_adjustment" validate:"gte=0"`
 	Attributes      map[string]string `json:"attributes" validate:"required,dive,required"`
 	InitialStock    int               `json:"initial_stock" validate:"gte=0"`

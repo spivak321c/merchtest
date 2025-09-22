@@ -377,11 +377,11 @@ func (s *CartService) AddItemToCart(ctx context.Context, userID uint, quantity i
 	// Determine inventory: focus on variants if they exist, else simple
 	var inventory *models.Inventory
 	var price decimal.Decimal = product.BasePrice
-	var varID string
+	//var varID string
 	if variantID != nil && len(product.Variants) > 0 {
-		varID = *variantID
+		//varID = *variantID
 		for _, v := range product.Variants {
-			if v.ID == varID && v.IsActive {
+			if v.ID == *variantID && v.IsActive {
 				inventory = &v.Inventory
 				price = price.Add(v.PriceAdjustment)
 				break
@@ -427,8 +427,9 @@ func (s *CartService) AddItemToCart(ctx context.Context, userID uint, quantity i
 		cartItem := &models.CartItem{
 			CartID:    cart.ID,
 			ProductID: productID,
-			VariantID: &varID, // Assume VariantID is *string in model
+			VariantID: variantID, // Assume VariantID is *string in model
 			Quantity:  quantity,
+			MerchantID: product.MerchantID,
 		}
 		if err := s.cartItemRepo.Create(ctx, cartItem); err != nil {
 			return fmt.Errorf("failed to create cart item: %w", err)
@@ -446,15 +447,20 @@ func (s *CartService) AddItemToCart(ctx context.Context, userID uint, quantity i
 
 	// Return updated cart
 	updatedCart, err := s.cartRepo.FindByID(ctx, cart.ID)
-	if err != nil {
-		s.logger.Error("Failed to fetch updated cart", zap.Uint("cart_id", cart.ID), zap.Error(err))
-		return nil, err
-	}
-	// Manual preload if FindByIDWithItems undefined
-	if err := db.DB.WithContext(ctx).Preload("Items").Find(updatedCart).Error; err != nil {
-		return nil, err
-	}
-	return updatedCart, nil
+    if err != nil {
+        s.logger.Error("Failed to fetch updated cart", zap.Uint("cart_id", cart.ID), zap.Error(err))
+        return nil, err
+    }
+    // Fix: Preload CartItems with related data
+    if err := db.DB.WithContext(ctx).
+        Preload("CartItems.Product.Media").
+        Preload("CartItems.Product.Variants.Inventory").
+        Preload("CartItems.Variant").
+        Find(updatedCart).Error; err != nil {
+        s.logger.Error("Failed to preload cart items", zap.Error(err))
+        return nil, err
+    }
+    return updatedCart, nil
 }
 
 
