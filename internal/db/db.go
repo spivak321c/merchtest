@@ -3,7 +3,7 @@ package db
 import (
 	//"api-customer-merchant/internal/db/models"
 	//"api-customer-merchant/internal/db/models"
-	"api-customer-merchant/internal/db/models"
+	//"api-customer-merchant/internal/db/models"
 	"log"
 	"os"
 	"time"
@@ -169,14 +169,14 @@ func AutoMigrate() {
 	//&models.User{},
 	//&models.MerchantApplication{},
 	//&models.Product{},
-	&models.Variant{},
+	//&models.Variant{},
 	//&models.Media{},
 	// &models.Cart{},
 	// &models.Order{},
 	// &models.OrderItem{},
 	// &models.CartItem{},
 	//&models.Category{},
-	 &models.Inventory{},
+	 //&models.Inventory{},
 	// &models.Promotion{},
 	// &models.ReturnRequest{},
 	// &models.Payout{},
