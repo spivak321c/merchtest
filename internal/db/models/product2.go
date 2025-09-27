@@ -80,7 +80,7 @@ type Product struct {
 	UpdatedAt   time.Time       `json:"updated_at"`
 	DeletedAt   gorm.DeletedAt  `gorm:"index" json:"deleted_at,omitempty"` // Soft deletes for recovery
 
-	Merchant        Merchant       `gorm:"foreignKey:MerchantID;references:ID;constraint:OnDelete:RESTRICT"` // Belongs to Merchant, no cascade to protect merchants
+	Merchant        Merchant       `gorm:"foreignKey:MerchantID;references:MerchantID;constraint:OnDelete:RESTRICT"` // Belongs to Merchant, no cascade to protect merchants
 	Category        Category       `gorm:"foreignKey:CategoryID;constraint:OnDelete:RESTRICT"` // Belongs to Category
 	Variants        []Variant      `gorm:"foreignKey:ProductID;constraint:OnDelete:CASCADE" json:"variants,omitempty"` // Has many Variants, cascade delete
 	Media           []Media        `gorm:"foreignKey:ProductID;constraint:OnDelete:CASCADE" json:"media,omitempty"` // Has many Media, cascade delete

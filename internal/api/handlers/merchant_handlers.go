@@ -515,3 +515,17 @@ func (h *MerchantHandler) BulkUploadProducts(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"message": fmt.Sprintf("uploaded %d products", successCount)})
 }
 */
+
+
+
+// func AddBankDetails(c *gin.Context) {
+//     merchantID := c.GetString("merchantID")  // From auth middleware
+//     var req dto.BankDetailsRequest  // Define DTO with fields
+//     if err := c.ShouldBindJSON(&req); err != nil { /* handle */ }
+
+//     err := merchantService.AddBankDetails(merchantID, MerchantBankDetails{
+//         // Map fields
+//     })
+//     if err != nil { /* handle */ }
+//     c.JSON(200, gin.H{"message": "Bank details added"})
+// }

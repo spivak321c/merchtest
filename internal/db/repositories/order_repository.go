@@ -49,8 +49,8 @@ func (r *OrderRepository) FindByMerchantID(merchantID uint) ([]models.Order, err
 }
 
 // Update modifies an existing order
-func (r *OrderRepository) Update(order *models.Order) error {
-	return r.db.Save(order).Error
+func (r *OrderRepository) Update(ctx context.Context,order *models.Order) error {
+	return r.db.WithContext(ctx).Save(order).Error
 }
 
 // Delete removes an order by ID

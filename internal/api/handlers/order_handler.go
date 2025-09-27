@@ -29,6 +29,8 @@ func (h *OrderHandler) CreateOrder(c *gin.Context) {
 		return
 	}
 	c.JSON(http.StatusOK, newOrder)
+	// Get authURL from payment init (modify service to return it)
+//c.JSON(http.StatusOK, gin.H{"new_order": newOrder, "paystack_url": authURL})
 }
 
 // GetOrder handles the request to retrieve a specific order by ID.

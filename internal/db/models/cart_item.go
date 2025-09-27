@@ -13,6 +13,6 @@ type CartItem struct {
 	MerchantID string   `gorm:"not null" json:"merchant_id"`
 	Cart       Cart     `gorm:"foreignKey:CartID"`
 	Product    Product  `gorm:"foreignKey:ProductID"`
-	Merchant   Merchant `gorm:"foreignKey:MerchantID"`
+	Merchant   Merchant `gorm:"foreignKey:MerchantID;references:MerchantID"`
 	Variant    *Variant `gorm:"foreignKey:VariantID"`
 }

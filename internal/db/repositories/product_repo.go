@@ -9,6 +9,7 @@ import (
 	"api-customer-merchant/internal/db"
 	"api-customer-merchant/internal/db/models"
 
+	"github.com/shopspring/decimal"
 	"gorm.io/gorm"
 )
 
@@ -18,6 +19,20 @@ var (
 	ErrInvalidInventory = errors.New("invalid inventory setup")
 	ErrMerchantNotFound = errors.New("merchant not found")
 )
+
+
+
+
+type ProductFilter struct {
+    CategoryName   *string
+    CategoryID     *uint
+    MinPrice       *decimal.Decimal
+    MaxPrice       *decimal.Decimal
+    InStock        *bool
+    VariantAttrs   map[string]interface{}
+    MerchantName   *string
+}
+
 
 type ProductRepository struct {
 	db *gorm.DB
@@ -176,6 +191,81 @@ func (r *ProductRepository) GetAllProducts(ctx context.Context, limit, offset in
 	return products, total, nil
 }
 
+
+
+
+
+
+func (r *ProductRepository) ProductsFilter(
+    ctx context.Context,
+    filter ProductFilter,
+    limit, offset int,
+    preloads ...string,
+) ([]models.Product, int64, error) {
+    var products []models.Product
+
+    query := r.db.WithContext(ctx).
+        Model(&models.Product{}).
+        Joins("LEFT JOIN categories ON categories.id = products.category_id").
+        Joins("LEFT JOIN merchants ON merchants.id = products.merchant_id").
+        Joins("LEFT JOIN variants ON variants.product_id = products.id").
+        Joins("LEFT JOIN inventories ON inventories.product_id = products.id OR inventories.variant_id = variants.id").
+        Where("products.deleted_at IS NULL")
+
+    // --- Apply filters ---
+    if filter.CategoryID != nil {
+        query = query.Where("products.category_id = ?", *filter.CategoryID)
+    }
+    if filter.CategoryName != nil {
+        query = query.Where("categories.name ILIKE ?", "%"+*filter.CategoryName+"%")
+    }
+    if filter.MinPrice != nil {
+        query = query.Where("products.base_price >= ?", *filter.MinPrice)
+    }
+    if filter.MaxPrice != nil {
+        query = query.Where("products.base_price <= ?", *filter.MaxPrice)
+    }
+    if filter.InStock != nil {
+        if *filter.InStock {
+            query = query.Where("(inventories.quantity - inventories.reserved_quantity) > 0")
+        } else {
+            query = query.Where("(inventories.quantity - inventories.reserved_quantity) <= 0")
+        }
+    }
+    if filter.MerchantName != nil {
+        query = query.Where("merchant.store_name ILIKE ?", "%"+*filter.MerchantName+"%")
+    }
+    if len(filter.VariantAttrs) > 0 {
+        for key, val := range filter.VariantAttrs {
+            // Postgres JSONB query on variant.attributes
+            query = query.Where("variants.attributes ->> ? = ?", key, fmt.Sprintf("%v", val))
+        }
+    }
+
+    // --- Count total ---
+    var total int64
+    if err := query.Distinct("products.id").Count(&total).Error; err != nil {
+        return nil, 0, fmt.Errorf("failed to count products: %w", err)
+    }
+
+    // --- Preloads ---
+    for _, preload := range preloads {
+        query = query.Preload(preload)
+    }
+
+    // --- Fetch results ---
+    err := query.Distinct("products.id").
+        Limit(limit).
+        Offset(offset).
+        Order("products.created_at DESC").
+        Find(&products).Error
+
+    if err != nil {
+        return nil, 0, fmt.Errorf("failed to fetch products: %w", err)
+    }
+
+    return products, total, nil
+}
 
 
 

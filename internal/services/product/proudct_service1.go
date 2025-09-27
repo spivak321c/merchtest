@@ -390,6 +390,131 @@ func (s *ProductService) GetAllProducts(ctx context.Context, limit, offset int, 
 	return responses, total, nil
 }
 
+
+
+
+
+// GetAllProducts fetches all active products for the landing page
+// Assumes ProductFilter is defined in the same package or imported.
+ type ProductFilter struct {
+     CategoryName   *string
+     CategoryID     *uint
+     MinPrice       *decimal.Decimal
+     MaxPrice       *decimal.Decimal
+     InStock        *bool
+     VariantAttrs   map[string]interface{}
+     MerchantName   *string
+ }
+
+func (s *ProductService) FilterProducts(ctx context.Context, filter ProductFilter, limit, offset int) ([]dto.ProductResponse, int64, error) {
+	logger := s.logger.With(zap.String("operation", "FilterProducts"))
+
+	// --- pagination sanitization ---
+	if limit <= 0 || limit > 100 {
+		limit = 20
+	}
+	if offset < 0 {
+		offset = 0
+	}
+
+
+
+
+	// --- fetch products from repository using the provided filter ---
+	repoFilter := repositories.ProductFilter{
+    CategoryName: filter.CategoryName,
+    CategoryID:   filter.CategoryID,
+    MinPrice:     filter.MinPrice,
+    MaxPrice:     filter.MaxPrice,
+    InStock:      filter.InStock,
+    VariantAttrs: filter.VariantAttrs,
+    MerchantName: filter.MerchantName,
+}
+
+products, total, err := s.productRepo.ProductsFilter(ctx, repoFilter, limit, offset, "Media", "Variants", "Variants.Inventory", "SimpleInventory")
+
+	if err != nil {
+		logger.Error("Failed to fetch products", zap.Error(err))
+		return nil, 0, fmt.Errorf("failed to fetch products: %w", err)
+	}
+
+	// --- map DB models -> DTOs ---
+	responses := make([]dto.ProductResponse, len(products))
+	for i, p := range products {
+		// convert base price once
+		basePriceFloat := p.BasePrice.InexactFloat64()
+
+		responses[i] = dto.ProductResponse{
+			ID:          p.ID,
+			MerchantID:  "", // hide merchant id from customer-facing API
+			Name:        p.Name,
+			Description: p.Description,
+			SKU:         p.SKU,
+			BasePrice:   basePriceFloat,
+			CategoryID:  p.CategoryID,
+			CreatedAt:   p.CreatedAt,
+			UpdatedAt:   p.UpdatedAt,
+			Variants:    make([]dto.VariantResponse, len(p.Variants)),
+			Media:       make([]dto.MediaResponse, len(p.Media)),
+		}
+
+		// Variants: compute TotalPrice = BasePrice + PriceAdjustment
+		for j, v := range p.Variants {
+			totalPriceDecimal := p.BasePrice.Add(v.PriceAdjustment) // decimal + decimal
+			responses[i].Variants[j] = dto.VariantResponse{
+				ID:              v.ID,
+				ProductID:       v.ProductID,
+				SKU:             v.SKU,
+				PriceAdjustment: v.PriceAdjustment.InexactFloat64(),
+				TotalPrice:      totalPriceDecimal.InexactFloat64(),
+				Attributes:      v.Attributes,
+				IsActive:        v.IsActive,
+				CreatedAt:       v.CreatedAt,
+				UpdatedAt:       v.UpdatedAt,
+				Inventory: dto.InventoryResponse{
+					ID:                v.Inventory.ID,
+					Quantity:          v.Inventory.Quantity,
+					ReservedQuantity:  v.Inventory.ReservedQuantity,
+					LowStockThreshold: v.Inventory.LowStockThreshold,
+					BackorderAllowed:  v.Inventory.BackorderAllowed,
+				},
+			}
+		}
+
+		// Media
+		for j, m := range p.Media {
+			responses[i].Media[j] = dto.MediaResponse{
+				ID:        m.ID,
+				ProductID: m.ProductID,
+				URL:       m.URL,
+				Type:      string(m.Type),
+				CreatedAt: m.CreatedAt,
+				UpdatedAt: m.UpdatedAt,
+			}
+		}
+
+		// SimpleInventory (for non-variant products)
+		if p.SimpleInventory != nil {
+			responses[i].SimpleInventory = &dto.InventoryResponse{
+				ID:                p.SimpleInventory.ID,
+				Quantity:          p.SimpleInventory.Quantity,
+				ReservedQuantity:  p.SimpleInventory.ReservedQuantity,
+				LowStockThreshold: p.SimpleInventory.LowStockThreshold,
+				BackorderAllowed:  p.SimpleInventory.BackorderAllowed,
+			}
+		}
+	}
+
+	logger.Info("Products fetched for filter", zap.Int("count", len(responses)), zap.Int64("total", total))
+	return responses, total, nil
+}
+
+
+
+
+
+
+
 // UpdateInventory adjusts stock for a given inventory ID
 func (s *ProductService) UpdateInventory(ctx context.Context, inventoryID string, delta int) error {
 	logger := s.logger.With(zap.String("operation", "UpdateInventory"), zap.String("inventory_id", inventoryID))

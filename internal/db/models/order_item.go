@@ -47,7 +47,7 @@ type OrderItem struct {
 	FulfillmentStatus FulfillmentStatus `gorm:"type:varchar(20);not null;default:'New'" json:"fulfillment_status"`
 	Order             Order             `gorm:"foreignKey:OrderID"`
 	Product           Product           `gorm:"foreignKey:ProductID;references:ID"`
-	Merchant          Merchant          `gorm:"foreignKey:MerchantID"`
+	Merchant          Merchant         `gorm:"foreignKey:MerchantID;references:MerchantID"`
 }
 
 // BeforeCreate validates the FulfillmentStatus field
